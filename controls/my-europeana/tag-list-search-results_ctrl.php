@@ -9,7 +9,13 @@
 	$Page->title = 'my europeana - tag list search results, ' . $config['site-name'];
 	$Page->heading = $config['site-name'];
 	$Page->view = 'html-layout_tpl.php';
-	$Page->script_body .= '<script src="/js/prettify.js"></script>' . PHP_EOL;
+
+	if ( !isset( $_SERVER['PHP_ENV'] ) || $_SERVER['PHP_ENV'] !== 'developments'  ) {
+		$Page->script_body .= '<script src="/js/prettify.min.js"></script>' . PHP_EOL;
+	} else {
+		$Page->script_body .= '<script src="/js/prettify.js"></script>' . PHP_EOL;
+	}
+
 	$Page->script_body .= '<script>prettyPrint();</script>' . PHP_EOL;
 
 
