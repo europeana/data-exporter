@@ -3,8 +3,6 @@
 	return
 	'<h2 class="page-header">my europeana - tag list</h2>' .
 
-	'<ul id="form-feedback">' . $form_feedback. '</ul>' .
-
 	'<p>' .
 		'<a href="#form-help" title="form help">form help</a>' .
 	'</p>' .

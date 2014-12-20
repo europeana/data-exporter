@@ -80,7 +80,7 @@ class Jobs {
 	 * @param {string} $job_identifier
 	 */
 	public static function createOutputFilename( $job_identifier ) {
-		return date( 'Y-m-d_H:i:s_' ) . $job_identifier . '.xml';
+		return date( 'Y-m-d_H.i.s_' ) . $job_identifier . '.xml';
 	}
 
 	/**

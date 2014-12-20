@@ -1,1 +1,4 @@
+.htaccess
 config.ini
+cli-jobs/*.php
+cli-output/*.xml
