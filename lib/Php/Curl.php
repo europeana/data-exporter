@@ -1,5 +1,4 @@
 <?php
-
 namespace	Php;
 use	Exception;
 use W3c\Http\HttpRequestInterface;
@@ -74,6 +73,12 @@ class Curl implements HttpRequestInterface {
 		curl_setopt( $this->curl, CURLOPT_COOKIEFILE, $this->cookiejar );
 	}
 
+	/**
+	 * @return {bool|string}
+	 * Returns TRUE on success or FALSE on failure. However, if the
+	 * CURLOPT_RETURNTRANSFER option is set, it will return the result on success,
+	 * FALSE on failure.
+	 */
 	protected function executeCurl() {
 		$this->response_header = '';
 		$result = curl_exec( $this->curl );
@@ -100,14 +105,28 @@ class Curl implements HttpRequestInterface {
 	/**
 	 * Sends a GET request
 	 *
-	 * @param {string $url}
-	 * is the address of the page you are looking for
+	 * @param {string} $url
+	 * the uri to get
+	 *
+	 * @param {object|array|string} $data
+	 * data to send in the get
+	 *
+	 * @param {bool} $form_encoded
+	 * whether or not to use http_build_query to url encode the array of data provided
 	 *
 	 * @returns {bool|string}
 	 * false or the text response
 	 **/
-	public function get( $url ) {
+	public function get( $url, $data = array(), $form_encoded = true ) {
 		$this->isUrlValid( $url );
+
+		if ( $form_encoded && ( is_array( $data ) || is_object( $data ) ) ) {
+			$data = http_build_query( $data );
+		}
+
+		if ( !empty( $data ) && is_string( $data ) ) {
+			$url .= '?' . $data;
+		}
 
 		$this->setCurlOption( CURLOPT_URL, $url );
 		$this->setCurlOption( CURLOPT_FOLLOWLOCATION, $this->curl_followlocation );
@@ -138,6 +157,8 @@ class Curl implements HttpRequestInterface {
 	 * false or the text response
 	 **/
 	public function getHeadersOnly( $url ) {
+		$this->isUrlValid( $url );
+
 		$this->setCurlOption( CURLOPT_URL, $url );
 		$this->setCurlOption( CURLOPT_FOLLOWLOCATION, $this->curl_followlocation );
 		$this->setCurlOption( CURLOPT_MAXREDIRS, $this->curl_max_redirects );
@@ -190,20 +211,23 @@ class Curl implements HttpRequestInterface {
 	 * @param {string} $url
 	 * the uri to post to
 	 *
-	 * @param {array} $data
+	 * @param {object|array} $data
 	 * data to send in the post
+	 *
+	 * @param {bool} $form_encoded
+	 * whether or not to use http_build_query to url encode the array of data provided
 	 *
 	 * @returns {bool|string}
 	 * false or the text response
 	 **/
-	public function post( $url, array $data = array(), $form_encoded = false ) {
+	public function post( $url, array $data = array(), $form_encoded = true ) {
 		$this->isUrlValid( $url );
 
-		if ( $form_encoded ) {
+		if ( $form_encoded && ( is_array( $data ) || is_object( $data ) ) ) {
 			$data = http_build_query( $data );
 		}
 
-		if ( !empty( $data ) ) {
+		if ( !empty( $data ) && is_string( $data ) ) {
 			$this->setCurlOption( CURLOPT_POSTFIELDS, $data );
 		}
 

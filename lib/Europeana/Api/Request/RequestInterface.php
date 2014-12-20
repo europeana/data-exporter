@@ -1,13 +1,22 @@
 <?php
 namespace	Europeana\Api\Request;
-use	W3C\Http\HttpRequestInterface;
 
 
 interface RequestInterface {
 
-	public function __construct( HttpRequestInterface $HttpRequest, array $properties = array() );
-	public function __get( $property );
-	public function call();
-	public function init();
+	/**
+	 * @param {array} $options
+	 */
+	public function __construct( array $options = array() );
+
+	/**
+	 * @param {object|array|string} $data
+	 * data to send in the get
+	 *
+	 * @return {array} $result
+	 * @return {bool|string} $result['response']
+	 * @return {array} $result['info']
+	 */
+	public function call( $data = array() );
 
 }

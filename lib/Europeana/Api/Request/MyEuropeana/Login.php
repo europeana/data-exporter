@@ -1,5 +1,4 @@
 <?php
-
 namespace	Europeana\Api\Request\MyEuropeana;
 use Europeana\Api\Request\RequestAbstract;
 
@@ -23,25 +22,49 @@ class Login extends RequestAbstract {
 
 
 	/**
-	 * @return {array}
+	 * @param {object|array|string} $data
+	 * data to send in the call
+	 *
+	 * @return {array} $result
+	 * @return {bool|string} $result['response']
+	 * @return {array} $result['info']
 	 */
-	public function call() {
-		$data = array(
-			'j_username' => $this->j_username,
-			'j_password' => $this->j_password
-		);
+	public function call( $data = array() ) {
+		if ( empty( $data ) ) {
+			$data = array(
+				'j_username' => $this->j_username,
+				'j_password' => $this->j_password
+			);
+		}
 
-		$result = array(
-			'response' => $this->_HttpRequest->post( $this->_endpoint, $data, true ),
-			'info' => $this->_HttpRequest->getCurlInfo()
-		);
-
-		return $result;
+		return parent::call( $data, 'post' );
 	}
 
 	public function init() {
 		parent::init();
-		$this->_endpoint = 'http://europeana.eu/api/login.do';
+
+		$this->endpoint = 'http://europeana.eu/api/login.do';
+		$this->j_password = '';
+		$this->j_username = '';
+	}
+
+	/**
+	 * @param {array} $options
+	 */
+	protected function populate( $options = array() ) {
+		parent::populate( $options );
+
+		if ( isset( $options['j_username'] ) ) {
+			$this->j_username = $options['j_username'];
+		} else {
+			throw new Exception( __METHOD__ . ' no j_username provided', 2 );
+		}
+
+		if ( isset( $options['j_password'] ) ) {
+			$this->j_password = $options['j_password'];
+		} else {
+			throw new Exception( __METHOD__ . ' no j_password provided', 2 );
+		}
 	}
 
 }

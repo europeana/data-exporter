@@ -90,7 +90,8 @@ class Request {
 					'europeana.eu',
 					'/portal/',
 					'search.html',
-					'/'
+					'/',
+					'?'
 				),
 				'',
 				urldecode( $query )

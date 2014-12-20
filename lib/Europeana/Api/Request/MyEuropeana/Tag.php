@@ -1,11 +1,10 @@
 <?php
-
 namespace	Europeana\Api\Request\MyEuropeana;
 use Europeana\Api\Request\RequestAbstract;
 
 
 /**
- * @link http://labs.europeana.eu/api/myeuropeana/
+ * @link http://labs.europeana.eu/api/myeuropeana/#tags
  */
 class Tag extends RequestAbstract {
 
@@ -23,27 +22,45 @@ class Tag extends RequestAbstract {
 
 
 	/**
-	 * @link http://labs.europeana.eu/api/myeuropeana/#tags
+	 * @param {object|array|string} $data
+	 * data to send in the call
+	 *
+	 * @return {array} $result
+	 * @return {bool|string} $result['response']
+	 * @return {array} $result['info']
 	 */
-	public function call() {
-		$data = array(
-			'tag' => $this->tag,
-			'europeanaid' => $this->europeanaid
-		);
+	public function call( $data = array() ) {
+		if ( empty( $data ) ) {
+			$data = array(
+				'tag' => $this->tag,
+				'europeanaid' => $this->europeanaid
+			);
+		}
 
-		$result = array(
-			'response' => $this->_HttpRequest->post( $this->_endpoint, $data, true ),
-			'info' => $this->_HttpRequest->getCurlInfo()
-		);
-
-		return $result;
+		return parent::call( $data, 'post' );
 	}
 
 	public function init() {
 		parent::init();
+
 		$this->europeanaid = '';
 		$this->tag = '';
-		$this->_endpoint = 'http://europeana.eu/api/v2/mydata/tag.json';
+		$this->endpoint = 'http://europeana.eu/api/v2/mydata/tag.json';
+	}
+
+	/**
+	 * @param {array} $options
+	 */
+	protected function populate( $options = array() ) {
+		parent::populate( $options );
+
+		if ( isset( $options['europeanaid'] ) ) {
+			$this->europeanaid = $options['europeanaid'];
+		}
+
+		if ( isset( $options['tag'] ) ) {
+			$this->tag = $options['tag'];
+		}
 	}
 
 }

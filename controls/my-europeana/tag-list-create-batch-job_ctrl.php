@@ -90,22 +90,24 @@
 
 			// make the login call
 			$data = array(
+				'HttpRequest' => $Curl,
 				'j_username' => $j_username,
 				'j_password' => $j_password
 			);
 
-			$LoginRequest = new Europeana\Api\Request\MyEuropeana\Login( $Curl, $data );
+			$LoginRequest = new Europeana\Api\Request\MyEuropeana\Login( $data );
 			$LoginResponse = new Europeana\Api\Response\Json\Login( $LoginRequest->call() );
 
 
 			// setup tag
 			$data = array(
 				'europeanaid' => $europeanaid,
+				'HttpRequest' => $Curl,
 				'tag' => $tag
 			);
 
 			// make the tag call
-			$TagRequest = new Europeana\Api\Request\MyEuropeana\Tag( $Curl, $data );
+			$TagRequest = new Europeana\Api\Request\MyEuropeana\Tag( $data );
 			$TagResponse = new Europeana\Api\Response\Json\Tag( $TagRequest->call(), $j_username );
 
 
@@ -120,7 +122,7 @@
 
 				App\Helpers\Jobs::addJobToFile(
 					array(
-						'endpoint' => $TagRequest->_endpoint,
+						'endpoint' => $TagRequest->endpoint,
 						'items' => $items,
 						'job-identifier' => $TagResponse->username,
 						'output-filename' => App\Helpers\Jobs::createOutputFilename( $TagResponse->username ),
