@@ -1,6 +1,11 @@
 <?php
 
 	$menu_items = array(
+		'search' => array(
+			'href' => '/search',
+			'page' => 'search',
+			'title' => 'search'
+		),
 		'tag' => array(
 			'href' => '/my-europeana/tag-list-search',
 			'page' => 'my-europeana/tag-list-search',
@@ -12,17 +17,6 @@
 			'title' => 'queue'
 		)
 	);
-
-	if ( APPLICATION_ENV === 'development' ) {
-			$menu_items = array(
-				'search' => array(
-					'href' => '/search',
-					'page' => 'search',
-					'title' => 'search'
-				)
-			) +
-			$menu_items;
-	}
 
 	$Nav = new Html\Nav( $menu_items );
 ?>
