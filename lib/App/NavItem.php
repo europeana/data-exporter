@@ -1,7 +1,7 @@
 <?php
-namespace Html\Nav;
+namespace App;
 
-class Item {
+class NavItem {
 
 	public $href;
 	public $page;

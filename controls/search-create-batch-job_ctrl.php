@@ -12,13 +12,13 @@
 	$Page->heading = $config['site-name'];
 	$Page->view = 'html-layout_tpl.php';
 
-	if ( !isset( $_SERVER['PHP_ENV'] ) || $_SERVER['PHP_ENV'] !== 'development'  ) {
-		$Page->script_body .= '<script src="/js/prettify.min.js"></script>' . PHP_EOL;
+	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
+		$Page->addScript( new W3c\Html\Script( array( 'src' => '/js/prettify.js' ) ) );
 	} else {
-		$Page->script_body .= '<script src="/js/prettify.js"></script>' . PHP_EOL;
+		$Page->addScript( new W3c\Html\Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
 	}
 
-	$Page->script_body .= '<script>prettyPrint();</script>' . PHP_EOL;
+	$Page->addScript( new W3c\Html\Script( array( 'content' => 'prettyPrint();' ) ) );
 
 
 	/**

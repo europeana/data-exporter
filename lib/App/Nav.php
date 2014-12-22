@@ -1,5 +1,5 @@
 <?php
-namespace Html;
+namespace App;
 
 class Nav {
 
@@ -9,7 +9,18 @@ class Nav {
 		$this->init( $items );
 	}
 
+	/**
+	 * @param {string} $class
+	 * @param {string} $page
+	 * @return {string}
+	 */
 	public function getNavAsUl( $class = '', $page = '' ) {
+		$result = '';
+
+		if ( empty( $this->items ) ) {
+			return $result;
+		}
+
 		$result = sprintf(
 			'<ul class="%s">',
 			filter_var( $class, FILTER_SANITIZE_STRING )
@@ -44,7 +55,7 @@ class Nav {
 		$this->items = array();
 
 		foreach ( $items as $item ) {
-			$this->items[] = new Nav\Item( $item );
+			$this->items[] = new NavItem( $item );
 		}
 	}
 

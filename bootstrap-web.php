@@ -28,7 +28,25 @@
 /**
  * page
  */
-	$Page = new Html\Page();
+	$Page = new App\Page();
+
+
+/**
+ * page meta
+ */
+	$Page->addMeta( new W3c\Html\Meta( array( 'name' => 'viewport', 'content' => 'width=device-width, initial-scale=1' ) ) );
+
+
+/**
+ * page link defaults
+ */
+	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
+		$Page->addLink( new W3c\Html\Link( array( 'href' => '/css/prettify.css' ) ) );
+		$Page->addLink( new W3c\Html\Link( array( 'href' => '/css/css.css' ) ) );
+	} else {
+		$Page->addStyle( new W3c\Html\Style( array( 'content' => file_get_contents( 'public/css/prettify.min.css' ) ) ) );
+		$Page->addStyle( new W3c\Html\Style( array( 'content' => file_get_contents( 'public/css/css.min.css' ) ) ) );
+	}
 
 
 /**
