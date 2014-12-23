@@ -1,9 +1,9 @@
 <?php
 
 namespace Europeana\Api\Response\Objects;
-use Europeana\Api\Response\ResponseObjectAbstract;
+use Europeana\Api\Response\ObjectAbstract;
 
-class ApiResponse extends ResponseObjectAbstract {
+class ApiResponse extends ObjectAbstract {
 
 	/**
 	 * @var string

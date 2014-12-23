@@ -1,13 +1,13 @@
 <?php
 
 namespace Europeana\Api\Response\Objects;
-use Europeana\Api\Response\ResponseObjectAbstract;
+use Europeana\Api\Response\ObjectAbstract;
 
 
 /**
  * an object represents the EDM metadata record. The object has the following parts:
  */
-class Object extends ResponseObjectAbstract {
+class Object extends ObjectAbstract {
 
 	/**
 	 * @var string

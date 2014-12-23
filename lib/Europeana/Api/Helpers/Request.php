@@ -118,7 +118,7 @@ class Request {
 	 * @param {string} $query_string
 	 * @return {string}
 	 */
-	public static function urlencodeQueryParams( $query_string ) {
+	public static function urlencodeQueryParams( $query_string = '' ) {
 		$result = '';
 		$params = explode( '&', $query_string );
 

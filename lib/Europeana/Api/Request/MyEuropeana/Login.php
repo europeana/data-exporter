@@ -1,12 +1,13 @@
 <?php
 namespace	Europeana\Api\Request\MyEuropeana;
-use Europeana\Api\Request\RequestAbstract;
+use Exception;
+use W3c\Http\Request;
 
 
 /**
  * @link http://labs.europeana.eu/api/authentication
  */
-class Login extends RequestAbstract {
+class Login extends Request {
 
 	/**
 	 * @var {string}
@@ -37,7 +38,7 @@ class Login extends RequestAbstract {
 			);
 		}
 
-		return parent::call( $data, 'post' );
+		return parent::post( $this->endpoint, $data );
 	}
 
 	public function init() {

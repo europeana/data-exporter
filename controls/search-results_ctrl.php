@@ -32,7 +32,7 @@
 	$rows = 12;
 	$SearchResponse = null;
 	$schema = 'ese';
-	$search_options = array();
+	$search_request_options = array();
 	$search_result = '';
 	$start = 1;
 	$total_records_found = 0;
@@ -108,7 +108,7 @@
 			}
 
 			// set search options
-			$search_options = array(
+			$search_request_options = array(
 				'query' => $query_string,
 				'rows' => $rows,
 				'start' => $start,
@@ -119,18 +119,18 @@
 			// set-up the search
 			$Curl = new Php\Curl();
 			$Curl->setHttpHeader( array( 'Accept: application/json' ) );
-			$search_options['HttpRequest'] = $Curl;
-			$SearchRequest = new Europeana\Api\Request\Search( $search_options );
+			$search_request_options['RequestService'] = $Curl;
+			$SearchRequest = new Europeana\Api\Request\Search( $search_request_options );
 
 
 			// make the call
-			$SearchResponse = new Europeana\Api\Response\Json\Search( $SearchRequest->call(), $wskey );
+			$SearchResponse = new Europeana\Api\Response\Search( $SearchRequest->call(), $wskey );
 
 
 			// output curl info & response
 			if ( $debug ) {
 				$search_result .= '<h3>cURL info</h3>';
-				$search_result .= '<pre class="prettyprint">' . print_r( $SearchResponse->_response_info, true ) . '</pre>';
+				$search_result .= '<pre class="prettyprint">' . print_r( $SearchResponse->http_info, true ) . '</pre>';
 
 				$search_result .= '<h3>response body</h3>';
 				$search_result .= '<pre class="prettyprint">' . $SearchResponse->getResponseAsJson() . '</pre>';

@@ -1,13 +1,13 @@
 <?php
-namespace	Europeana\Api\Request;
+namespace Europeana\Api\Request;
 use Exception;
-use	W3c\Http\HttpRequestInterface;
+use W3c\Http\Request;
 
 
 /**
  * @link https://sites.google.com/site/projecteuropeana/documents/new-ingestion-process-and-portal-planning/api-1/api
  */
-class Search extends RequestAbstract {
+class Search extends Request {
 
 	/**
 	 * @var {string}
@@ -102,7 +102,7 @@ class Search extends RequestAbstract {
 			$data = $this->buildQueryParams();
 		}
 
-		return parent::call( $data );
+		return parent::post( $this->endpoint, $data );
 	}
 
 	protected function init() {

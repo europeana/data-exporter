@@ -1,7 +1,5 @@
 <?php
-
-namespace Europeana\Api\Response\Json;
-use Europeana\Api\Response\JsonAbstract;
+namespace Europeana\Api\Response;
 
 
 class Login extends JsonAbstract {

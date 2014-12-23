@@ -1,13 +1,13 @@
 <?php
 
 namespace Europeana\Api\Response\Objects;
-use Europeana\Api\Response\ResponseObjectAbstract;
+use Europeana\Api\Response\ObjectAbstract;
 
 
 /**
  * the list of search elements (query and qf parameters) (available in case of breadrumb and portal profile applications). It is an array, and each breadcrumb contains the following fields:
  */
-class Breadcrumb extends ResponseObjectAbstract {
+class Breadcrumb extends ObjectAbstract {
 
 	/**
 	 * @var string

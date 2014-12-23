@@ -1,12 +1,12 @@
 <?php
 namespace	Europeana\Api\Request\MyEuropeana;
-use Europeana\Api\Request\RequestAbstract;
+use W3c\Http\Request;
 
 
 /**
  * @link http://labs.europeana.eu/api/myeuropeana/#tags
  */
-class Tag extends RequestAbstract {
+class Tag extends Request {
 
 	/**
 	 * @var {string}
@@ -37,7 +37,7 @@ class Tag extends RequestAbstract {
 			);
 		}
 
-		return parent::call( $data, 'post' );
+		return parent::post( $this->endpoint, $data );
 	}
 
 	public function init() {

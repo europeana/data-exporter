@@ -1,13 +1,13 @@
 <?php
 
 namespace Europeana\Api\Response\Objects;
-use Europeana\Api\Response\ResponseObjectAbstract;
+use Europeana\Api\Response\ObjectAbstract;
 
 
 /**
  * if the search has results, the hits take place in the "items" array. Each item is an object, and represents a summary of metadata record. The actual content is depending of the profile parameter. The mandatory field are:
  */
-class Tag extends ResponseObjectAbstract {
+class Tag extends ObjectAbstract {
 
 	/**
 	 * @var {int}

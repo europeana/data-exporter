@@ -1,10 +1,10 @@
 <?php
 
 namespace Europeana\Api\Response\Objects;
-use Europeana\Api\Response\ResponseObjectAbstract;
+use Europeana\Api\Response\ObjectAbstract;
 
 
-class EdmCountry extends ResponseObjectAbstract {
+class EdmCountry extends ObjectAbstract {
 
 	/**
 	 * @var array

@@ -1,13 +1,13 @@
 <?php
 
 namespace Europeana\Api\Response\Objects;
-use Europeana\Api\Response\ResponseObjectAbstract;
+use Europeana\Api\Response\ObjectAbstract;
 
 
 /**
  * a list of alternative terms available in the database. Each suggestion contains
  */
-class SpellcheckSuggestion extends ResponseObjectAbstract {
+class SpellcheckSuggestion extends ObjectAbstract {
 
 	/**
 	 * @var int

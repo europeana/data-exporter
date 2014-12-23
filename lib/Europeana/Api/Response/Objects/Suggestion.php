@@ -1,10 +1,10 @@
 <?php
 
 namespace Europeana\Api\Response\Objects;
-use Europeana\Api\Response\ResponseObjectAbstract;
+use Europeana\Api\Response\ObjectAbstract;
 
 
-class Suggestion extends ResponseObjectAbstract {
+class Suggestion extends ObjectAbstract {
 
 	/**
 	 * @var string

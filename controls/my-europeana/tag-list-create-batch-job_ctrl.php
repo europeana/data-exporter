@@ -30,9 +30,11 @@
 	$html_result = '<h2 class="page-header">my europeana - tag list: create batch job</h2>';
 	$j_username = '';
 	$j_password = '';
+	$login_request_options = array();
 	$login_result = '';
 	$schema = 'ese';
 	$tag = '';
+	$tag_request_options = array();
 	$tag_result = '';
 	$total_records_found = 0;
 
@@ -120,20 +122,20 @@
 
 
 			// make the login call
-			$data = array(
-				'HttpRequest' => $Curl,
+			$login_request_options = array(
 				'j_username' => $j_username,
-				'j_password' => $j_password
+				'j_password' => $j_password,
+				'RequestService' => $Curl
 			);
 
-			$LoginRequest = new Europeana\Api\Request\MyEuropeana\Login( $data );
-			$LoginResponse = new Europeana\Api\Response\Json\Login( $LoginRequest->call() );
+			$LoginRequest = new Europeana\Api\Request\MyEuropeana\Login( $login_request_options );
+			$LoginResponse = new Europeana\Api\Response\Login( $LoginRequest->call() );
 
 
 			// output curl info & response
 			if ( $debug ) {
 				$login_result .= '<h3>login cURL info</h3>';
-				$login_result .= '<pre class="prettyprint">' . print_r( $LoginResponse->_response_info, true ) . '</pre>';
+				$login_result .= '<pre class="prettyprint">' . print_r( $LoginResponse->http_info, true ) . '</pre>';
 
 				$login_result .= '<h3>login response body</h3>';
 				$login_result .= '<pre class="prettyprint">' . $LoginResponse->getResponseAsJson() . '</pre>';
@@ -141,22 +143,22 @@
 
 
 			// setup tag
-			$data = array(
+			$tag_request_options = array(
 				'europeanaid' => $europeanaid,
-				'HttpRequest' => $Curl,
+				'RequestService' => $Curl,
 				'tag' => $tag
 			);
 
 
 			// make the tag call
-			$TagRequest = new Europeana\Api\Request\MyEuropeana\Tag( $data );
-			$TagResponse = new Europeana\Api\Response\Json\Tag( $TagRequest->call(), $j_username );
+			$TagRequest = new Europeana\Api\Request\MyEuropeana\Tag( $tag_request_options );
+			$TagResponse = new Europeana\Api\Response\Tag( $TagRequest->call(), $j_username );
 
 
 			// output curl info & response
 			if ( $debug ) {
 				$tag_result .= '<h3>tag cURL info</h3>';
-				$tag_result .= '<pre class="prettyprint">' . print_r( $TagResponse->_response_info, true ) . '</pre>';
+				$tag_result .= '<pre class="prettyprint">' . print_r( $TagResponse->http_info, true ) . '</pre>';
 
 				$tag_result .= '<h3>tag response body</h3>';
 				$tag_result .= '<pre class="prettyprint">' . $TagResponse->getResponseAsJson() . '</pre>';

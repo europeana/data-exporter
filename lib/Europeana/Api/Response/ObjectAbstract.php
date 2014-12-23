@@ -5,7 +5,7 @@ use ReflectionClass;
 use ReflectionProperty;
 
 
-abstract class ResponseObjectAbstract {
+abstract class ObjectAbstract {
 
 	/**
 	 * @var array

@@ -1,13 +1,13 @@
 <?php
 
 namespace Europeana\Api\Response\Objects;
-use Europeana\Api\Response\ResponseObjectAbstract;
+use Europeana\Api\Response\ObjectAbstract;
 
 
 /**
  * is object representing spellcheck suggestions (available in case of spellcheck and portal profile applications). The object contains the following fields:
  */
-class Spellcheck extends ResponseObjectAbstract {
+class Spellcheck extends ObjectAbstract {
 
 	/**
 	 * @var boolean

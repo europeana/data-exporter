@@ -1,10 +1,11 @@
 <?php
 namespace	Php;
 use	Exception;
-use W3c\Http\HttpRequestInterface;
+use W3c\Http\RequestInterface;
+use W3c\Http\RequestServiceInterface;
 
 
-class Curl implements HttpRequestInterface {
+class Curl implements RequestInterface, RequestServiceInterface {
 
 	protected $curl;
 	protected $curl_connecttimeout;
@@ -103,24 +104,19 @@ class Curl implements HttpRequestInterface {
 	}
 
 	/**
-	 * Sends a GET request
-	 *
 	 * @param {string} $url
 	 * the uri to get
 	 *
 	 * @param {object|array|string} $data
 	 * data to send in the get
 	 *
-	 * @param {bool} $form_encoded
-	 * whether or not to use http_build_query to url encode the array of data provided
-	 *
 	 * @returns {bool|string}
 	 * false or the text response
 	 **/
-	public function get( $url, $data = array(), $form_encoded = true ) {
+	public function get( $url, $data = array() ) {
 		$this->isUrlValid( $url );
 
-		if ( $form_encoded && ( is_array( $data ) || is_object( $data ) ) ) {
+		if ( is_array( $data ) || is_object( $data ) ) {
 			$data = http_build_query( $data );
 		}
 
@@ -143,13 +139,11 @@ class Curl implements HttpRequestInterface {
 		return $this->executeCurl();
 	}
 
-	public function getCurlInfo() {
+	public function getRequestInfo() {
 		return $this->curl_info;
 	}
 
 	/**
-	 * Sends a GET request
-	 *
 	 * @param {string} $url
 	 * is the address of the page you are looking for
 	 *
@@ -206,24 +200,19 @@ class Curl implements HttpRequestInterface {
 	}
 
 	/**
-	 * Sends a POST request
-	 *
 	 * @param {string} $url
 	 * the uri to post to
 	 *
-	 * @param {object|array} $data
+	 * @param {object|array|string} $data
 	 * data to send in the post
-	 *
-	 * @param {bool} $form_encoded
-	 * whether or not to use http_build_query to url encode the array of data provided
 	 *
 	 * @returns {bool|string}
 	 * false or the text response
 	 **/
-	public function post( $url, array $data = array(), $form_encoded = true ) {
+	public function post( $url, $data = array() ) {
 		$this->isUrlValid( $url );
 
-		if ( $form_encoded && ( is_array( $data ) || is_object( $data ) ) ) {
+		if ( is_array( $data ) || is_object( $data ) ) {
 			$data = http_build_query( $data );
 		}
 
