@@ -1,0 +1,3 @@
+[submodule "lib/W3C"]
+	path = lib/W3C
+	url = git@github.com:dan-nl/W3C.git
