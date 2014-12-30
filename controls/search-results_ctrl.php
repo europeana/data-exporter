@@ -13,12 +13,12 @@
 	$Page->view = 'html-layout_tpl.php';
 
 	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
-		$Page->addScript( new W3c\Html\Script( array( 'src' => '/js/prettify.js' ) ) );
+		$Page->addScript( new W3C\Html\Script( array( 'src' => '/js/prettify.js' ) ) );
 	} else {
-		$Page->addScript( new W3c\Html\Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
+		$Page->addScript( new W3C\Html\Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
 	}
 
-	$Page->addScript( new W3c\Html\Script( array( 'content' => 'prettyPrint();' ) ) );
+	$Page->addScript( new W3C\Html\Script( array( 'content' => 'prettyPrint();' ) ) );
 
 
 	/**
@@ -117,7 +117,7 @@
 
 
 			// set-up the search
-			$Curl = new Php\Curl();
+			$Curl = new Libcurl\Curl();
 			$Curl->setHttpHeader( array( 'Accept: application/json' ) );
 			$search_request_options['RequestService'] = $Curl;
 			$SearchRequest = new Europeana\Api\Request\Search( $search_request_options );

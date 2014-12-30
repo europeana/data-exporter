@@ -17,7 +17,7 @@ abstract class JsonAbstract extends ObjectAbstract {
 	public $message_body;
 
 	/**
-	 * @var {\W3cHttp\Response}
+	 * @var {\W3CHttp\Response}
 	 */
 	public $Response;
 
@@ -30,7 +30,7 @@ abstract class JsonAbstract extends ObjectAbstract {
 	 * @param {array} $response
 	 * @param {string} $wskey
 	 */
-	public function __construct( \W3c\Http\Response $Response, $wskey = '' ) {
+	public function __construct( \W3C\Http\Response $Response, $wskey = '' ) {
 		$this->init();
 
 		if ( empty( $Response ) ) {

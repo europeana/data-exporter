@@ -21,25 +21,25 @@ class Page {
 
 	/**
 	 * @var {array}
-	 * an array collection of \W3c\Html\Link’s
+	 * an array collection of \W3C\Html\Link’s
 	 */
 	protected $links;
 
 	/**
 	 * @var {array}
-	 * an array collection of \W3c\Html\Meta’s
+	 * an array collection of \W3C\Html\Meta’s
 	 */
 	protected $metas;
 
 	/**
 	 * @var {array}
-	 * an array collection of \W3c\Html\Script’s
+	 * an array collection of \W3C\Html\Script’s
 	 */
 	protected $scripts;
 
 	/**
 	 * @var {array}
-	 * an array collection of \W3c\Html\Style’s
+	 * an array collection of \W3C\Html\Style’s
 	 */
 	protected $styles;
 
@@ -59,24 +59,24 @@ class Page {
 	}
 
 	/**
-	 * @param {\W3c\Html\Link} $Link
+	 * @param {\W3C\Html\Link} $Link
 	 */
-	public function addLink( \W3c\Html\Link $Link ) {
+	public function addLink( \W3C\Html\Link $Link ) {
 		$this->links[] = $Link;
 	}
 
 	/**
-	 * @param {\W3c\Html\Meta} $Meta
+	 * @param {\W3C\Html\Meta} $Meta
 	 */
-	public function addMeta( \W3c\Html\Meta $Meta ) {
+	public function addMeta( \W3C\Html\Meta $Meta ) {
 		$this->metas[] = $Meta;
 	}
 
 	/**
-	 * @param {\W3c\Html\Script} $Script
+	 * @param {\W3C\Html\Script} $Script
 	 * @param {string} $placement
 	 */
-	public function addScript( \W3c\Html\Script $Script, $placement = 'body' ) {
+	public function addScript( \W3C\Html\Script $Script, $placement = 'body' ) {
 		switch ( $placement ) {
 			case 'body':
 				$this->scripts['body'][] = $Script;
@@ -88,9 +88,9 @@ class Page {
 	}
 
 	/**
-	 * @param {\W3c\Html\Style} $Style
+	 * @param {\W3C\Html\Style} $Style
 	 */
-	public function addStyle( \W3c\Html\Style $Style ) {
+	public function addStyle( \W3C\Html\Style $Style ) {
 		$this->styles[] = $Style;
 	}
 

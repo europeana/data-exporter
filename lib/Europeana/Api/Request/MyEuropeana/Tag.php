@@ -1,6 +1,6 @@
 <?php
 namespace	Europeana\Api\Request\MyEuropeana;
-use W3c\Http\Request;
+use W3C\Http\Request;
 
 
 /**
