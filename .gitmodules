@@ -1,3 +1,6 @@
 [submodule "lib/W3C"]
 	path = lib/W3C
 	url = git@github.com:dan-nl/W3C.git
+[submodule "lib/Libcurl"]
+	path = lib/Libcurl
+	url = git@github.com:dan-nl/Libcurl.git
