@@ -10,3 +10,6 @@
 [submodule "lib/OWASP"]
 	path = lib/OWASP
 	url = git@github.com:dan-nl/OWASP.git
+[submodule "lib/Europeana"]
+	path = lib/Europeana
+	url = git@github.com:dan-nl/Europeana.git
