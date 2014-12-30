@@ -7,3 +7,6 @@
 [submodule "lib/Php"]
 	path = lib/Php
 	url = git@github.com:dan-nl/Php.git
+[submodule "lib/OWASP"]
+	path = lib/OWASP
+	url = git@github.com:dan-nl/OWASP.git
