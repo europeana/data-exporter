@@ -39,7 +39,7 @@
 	/**
 	 * set-up csrf
 	 */
-	$Csrf = new \App\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
+	$Csrf = new \OWASP\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
 
 
 	/**
