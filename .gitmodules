@@ -4,3 +4,6 @@
 [submodule "lib/Libcurl"]
 	path = lib/Libcurl
 	url = git@github.com:dan-nl/Libcurl.git
+[submodule "lib/Php"]
+	path = lib/Php
+	url = git@github.com:dan-nl/Php.git
