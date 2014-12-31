@@ -9,7 +9,7 @@
 </head>
 <body>
 <?php include 'header_tpl.php'; ?>
-<?php $Page->getViewFilepath() !== false ? include $Page->getViewFilepath() : null; ?>
+<?php if ( $Page->getViewFilepath() !== false ) { include $Page->getViewFilepath(); } else { echo $Page->html; } ?>
 <?php APPLICATION_ENV === 'development' ? include 'debug_tpl.php' : null; ?>
 <?php echo $Page->getScripts( 'body' ); ?>
 </body>
