@@ -97,7 +97,7 @@
 
 	#header {
 		overflow: hidden;
-		margin-bottom: 1.5em;
+		margin-bottom: 2.5em;
 	}
 
 	#header h1 {
@@ -260,12 +260,14 @@
 		background-color: #f9f9f9;
 	}
 
+
 /**
  * debug
  */
 	#debug {
 		margin-top: 6em;
 	}
+
 
 /**
  * icons
@@ -276,5 +278,13 @@
 		padding: 0 0 0 28px;
 		border: none;
 		background-image: url( '/media/icons/help-22.png' );
+		background-repeat: no-repeat;
+	}
+
+	.icon-delete {
+		padding: 7px;
+		background-color: transparent;
+		background-position: center;
+		background-image: url( '/media/icons/delete-16.png' );
 		background-repeat: no-repeat;
 	}
