@@ -1,7 +1,8 @@
 <?php
 
 	return
-	'<h3>batch job</h3>' .
+	'<h2 class="page-header">batch job</h2>' .
+	'<ul id="form-feedback">' . $form_feedback. '</ul>' .
 	'<p>verify that the sample result set below matches the results you’re expecting. if they do, you can create a background server process that will create an XML file based on this query. the resulting XML file will contain a total of ' . number_format( $TagResponse->totalResults ) . ' items and can be used to upload those items to <a href="https://commons.wikimedia.org">Wikimedia Commons</a> with the <a href="http://www.mediawiki.org/wiki/Extension:GWToolset">Mediawiki GWToolset Extension</a>.</p>' .
 
 	'<form action="/my-europeana/tag-list/create-batch-job/" method="post" role="form">' .

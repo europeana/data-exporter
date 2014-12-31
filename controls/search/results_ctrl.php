@@ -8,8 +8,8 @@
 	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
 
 	$Page->page = 'search/results';
-	$Page->title = 'search results, ' . $config['site-name'];
-	$Page->heading = $config['site-name'];
+	$Page->title = 'Results - Search: ' . $config['site-name'];
+	$Page->heading = 'Results - Search: ' . $config['site-name'];
 	$Page->view = 'html-layout_tpl.php';
 
 	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
@@ -27,7 +27,7 @@
 	$debug = false;
 	$empty_result = '<pre class="prettyprint">[{}]</pre>';
 	$form_feedback = '';
-	$html_result = '<h2 class="page-header">search: result</h2>';
+	$html_result = '';
 	$query = '';
 	$rows = 12;
 	$SearchResponse = null;

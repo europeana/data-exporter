@@ -1,9 +1,7 @@
 <?php
 
 	return
-	'<p>' .
-		'<a href="#form-help" title="form help">form help</a>' .
-	'</p>' .
+	'<p><a href="#form-help" title="form help">form help</a></p>' .
 
 	'<form action="/my-europeana/tag-list/results/" method="post" role="form">' .
 		'<input type="hidden" name="' . $Csrf->getTokenKey() . '" value="' . $Csrf->getTokenValue() . '" />' .

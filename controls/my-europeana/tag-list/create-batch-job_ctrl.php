@@ -6,8 +6,8 @@
 	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
 
 	$Page->page = 'my-europeana/tag-list/create-batch-job';
-	$Page->title = 'my europeana - tag list create batch job, ' . $config['site-name'];
-	$Page->heading = $config['site-name'];
+	$Page->title = 'Create Batch Job - Tag List, My Europeana: ' . $config['site-name'];
+	$Page->heading = 'Create Batch Job - Tag List, My Europeana: ' . $config['site-name'];
 	$Page->view = 'html-layout_tpl.php';
 
 	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
@@ -27,7 +27,7 @@
 	$debug = false;
 	$empty_result = '<pre class="prettyprint">[{}]</pre>';
 	$europeanaid = '';
-	$html_result = '<h2 class="page-header">my europeana - tag list: create batch job</h2>';
+	$html_result = '';
 	$j_username = '';
 	$j_password = '';
 	$login_request_options = array();

@@ -6,8 +6,8 @@
 	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
 
 	$Page->page = 'my-europeana/tag-list/results';
-	$Page->title = 'my europeana - tag list search results, ' . $config['site-name'];
-	$Page->heading = $config['site-name'];
+	$Page->title = 'Results - Tag List, My Europeana: ' . $config['site-name'];
+	$Page->heading = 'Results - Tag List, My Europeana: ' . $config['site-name'];
 	$Page->view = 'html-layout_tpl.php';
 
 	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
@@ -26,7 +26,7 @@
 	$empty_result = '<pre class="prettyprint">[{}]</pre>';
 	$europeanaid = '';
 	$form_feedback = '';
-	$html_result = '<h2 class="page-header">my europeana - tag list: search results</h2>';
+	$html_result = '';
 	$j_username = '';
 	$j_password = '';
 	$login_request_options = array();

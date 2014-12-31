@@ -8,8 +8,8 @@
 	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
 
 	$Page->page = 'search/create-batch-job';
-	$Page->title = 'search create batch job, ' . $config['site-name'];
-	$Page->heading = $config['site-name'];
+	$Page->title = 'Create Batch Job - Search: ' . $config['site-name'];
+	$Page->heading = 'Create Batch Job - Search: ' . $config['site-name'];
 	$Page->view = 'html-layout_tpl.php';
 
 	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
@@ -28,7 +28,7 @@
 	$debug = false;
 	$empty_result = '<pre class="prettyprint">[{}]</pre>';
 	$form_feedback = '';
-	$html_result = '<h2 class="page-header">search: create batch job</h2>';
+	$html_result = '';
 	$query = '';
 	$rows = 12;
 	$SearchResponse = null;
