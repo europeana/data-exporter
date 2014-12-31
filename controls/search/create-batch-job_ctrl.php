@@ -152,7 +152,12 @@
 
 
 			// process the response
-			if ( $SearchResponse->totalResults > 0 ) {
+			if ( $SearchResponse->totalResults > $config['job-max'] ) {
+
+				$html_result = '<pre class="prettyprint">{ success: false, message: "total results exceeded the maximum number of items per job" }</pre>';
+
+			} elseif ( $SearchResponse->totalResults > 0 ) {
+
 				$job_path = realpath( APPLICATION_PATH . '/cli-jobs/' ) . '/';
 
 				if ( !empty( $SearchResponse->items ) && !empty( $SearchResponse->items[0]->europeanaCollectionName ) ) {

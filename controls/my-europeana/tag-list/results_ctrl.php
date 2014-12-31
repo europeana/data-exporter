@@ -126,7 +126,7 @@
 			}
 
 
-			// setup tag
+			// setup tag request
 			$tag_request_options = array(
 				'europeanaid' => $europeanaid,
 				'RequestService' => $Curl,
@@ -140,18 +140,28 @@
 
 
 			// process the response
-			if ( $TagResponse->totalResults > 0 ) {
+			if ( $TagResponse->totalResults > $config['job-max'] ) {
+
+				$html_result .=
+					sprintf(
+						'<h2 class="page-header">batch job</h2><p>the total results %s exceed the maximum job limit of %s items. you need to narrow down the result set in order to create a batch job.</p>',
+						number_format( $TagResponse->totalResults ),
+						number_format( $config['job-max'] )
+					);
+
+					$html_result .= Europeana\Api\Helpers\Response::getResponseImagesWithLinks( $TagResponse );
+
+			} elseif ( $TagResponse->totalResults > 0 ) {
 
 				// add batch job form
 				$html_result .= include 'my-europeana/tag-list/create-batch-job_form.php';
-
-				// add results example set
 				$html_result .= Europeana\Api\Helpers\Response::getResponseImagesWithLinks( $TagResponse );
 
-			// set no results output
 			} else {
+
 				$html_result .= '<h3>sample result set</h3>';
 				$html_result .= '<p>no tags found</p>';
+
 			}
 
 

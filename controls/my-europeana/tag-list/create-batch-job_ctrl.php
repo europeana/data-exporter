@@ -166,7 +166,12 @@
 
 
 			// process the response
-			if ( $TagResponse->items > 0 ) {
+			if ( $TagResponse->totalResults > $config['job-max'] ) {
+
+				$html_result = '<pre class="prettyprint">{ success: false, message: "total results exceeded the maximum number of items per job" }</pre>';
+
+			} elseif ( $TagResponse->items > 0 ) {
+
 				$items = array();
 				$job_path = realpath( APPLICATION_PATH . '/cli-jobs/' ) . '/';
 
@@ -192,8 +197,11 @@
 				);
 
 				$html_result .= '<pre class="prettyprint">{ success: true, message: "batch job created" }</pre>';
+
 			} else {
+
 				$html_result = '<pre class="prettyprint">{ success: false, message: "no results found" }</pre>';
+
 			}
 
 			// finalize html output

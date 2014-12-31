@@ -138,18 +138,28 @@
 
 
 			// process the response
-			if ( $SearchResponse->totalResults > 0 ) {
+			if ( $SearchResponse->totalResults > $config['job-max'] ) {
+
+				$html_result .=
+					sprintf(
+						'<h2 class="page-header">batch job</h2><p>the total results %s exceed the maximum job limit of %s items. you need to narrow down the result set in order to create a batch job.</p>',
+						number_format( $SearchResponse->totalResults ),
+						number_format( $config['job-max'] )
+					);
+
+				$html_result .= Response_Helper::getResponseImagesWithLinks( $SearchResponse );
+
+			} elseif ( $SearchResponse->totalResults > 0 ) {
 
 				// add batch job form
 				$html_result .= include 'search/create-batch-job_form.php';
-
-				// add results example set
 				$html_result .= Response_Helper::getResponseImagesWithLinks( $SearchResponse );
 
-			// set no results output
 			} else {
+
 				$html_result .= '<h3>sample result set</h3>';
 				$html_result .= '<p>no search results found</p>';
+
 			}
 
 			// finalize html output
