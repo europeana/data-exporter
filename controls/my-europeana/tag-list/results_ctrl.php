@@ -143,7 +143,7 @@
 			if ( $TagResponse->totalResults > 0 ) {
 
 				// add batch job form
-				$html_result .= include 'my-europeana/tag-list-create-batch-job_form.php';
+				$html_result .= include 'my-europeana/tag-list/create-batch-job_form.php';
 
 				// add results example set
 				$html_result .= Europeana\Api\Helpers\Response::getResponseImagesWithLinks( $TagResponse );
