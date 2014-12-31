@@ -25,6 +25,8 @@
 		define( 'APPLICATION_ENV', 'production' );
 	}
 
+	define( 'APPLICATION_PATH', realpath( __DIR__ ) );
+
 
 /**
  * include paths
