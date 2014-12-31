@@ -5,7 +5,7 @@
 	 */
 	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
 
-	$Page->page = 'my-europeana/tag-list-search-results';
+	$Page->page = 'my-europeana/tag-list/results';
 	$Page->title = 'my europeana - tag list search results, ' . $config['site-name'];
 	$Page->heading = $config['site-name'];
 	$Page->view = 'html-layout_tpl.php';

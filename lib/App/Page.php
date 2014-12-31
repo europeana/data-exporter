@@ -94,6 +94,9 @@ class Page {
 		$this->styles[] = $Style;
 	}
 
+	/**
+	 * @return {string}
+	 */
 	public function getHeading() {
 		$result = '';
 
@@ -158,6 +161,9 @@ class Page {
 		return $result;
 	}
 
+	/**
+	 * @return {string}
+	 */
 	public function getStyles() {
 		$result = '';
 
@@ -166,6 +172,19 @@ class Page {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * @return {string|bool}
+	 */
+	public function getViewFilepath() {
+		if ( substr( $this->page, -1 ) === '/' ) {
+			$filename = 'index_view.php';
+		} else {
+			$filename = '_view.php';
+		}
+
+		return realpath( APPLICATION_PATH . '/views/' . $this->page . $filename );
 	}
 
 	protected function init() {

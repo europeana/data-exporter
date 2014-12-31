@@ -1,13 +1,11 @@
 <?php
 
 	return
-	'<h2 class="page-header">query</h2>' .
-
 	'<p>' .
 		'<a href="#form-help" title="form help">form help</a>' .
 	'</p>' .
 
-	'<form action="/search-results" method="post" rolse="form">' .
+	'<form action="/search/results/" method="post" rolse="form">' .
 		'<input type="hidden" name="' . $Csrf->getTokenKey() . '" value="' . $Csrf->getTokenValue() . '" />' .
 
 		'<p>' .

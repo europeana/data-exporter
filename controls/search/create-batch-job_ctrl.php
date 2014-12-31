@@ -7,8 +7,8 @@
 	use \Europeana\Api\Helpers\Request as Request_Helper;
 	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
 
-	$Page->page = 'search-results';
-	$Page->title = 'search results, ' . $config['site-name'];
+	$Page->page = 'search/create-batch-job';
+	$Page->title = 'search create batch job, ' . $config['site-name'];
 	$Page->heading = $config['site-name'];
 	$Page->view = 'html-layout_tpl.php';
 
@@ -24,10 +24,11 @@
 	/**
 	 * set-up variables
 	 */
+	$create_batch_job = false;
 	$debug = false;
 	$empty_result = '<pre class="prettyprint">[{}]</pre>';
 	$form_feedback = '';
-	$html_result = '<h2 class="page-header">search: result</h2>';
+	$html_result = '<h2 class="page-header">search: create batch job</h2>';
 	$query = '';
 	$rows = 12;
 	$SearchResponse = null;
@@ -72,8 +73,21 @@
 
 
 			// get regular form params
+			if ( isset( $_POST['create-batch-job'] ) ) {
+				$create_batch_job = filter_var( $_POST['create-batch-job'], FILTER_SANITIZE_STRING );
+			}
+
+			if ( $create_batch_job !== 'true' )  {
+				$html_result .= '<pre class="prettyprint">{ success: false, message: "no batch job requested" }</pre>';
+				break;
+			}
+
 			if ( isset( $_POST['debug'] ) && $_POST['debug'] === 'true' ) {
 				$debug = true;
+			}
+
+			if ( isset( $_POST['total-records-found'] ) ) {
+				$total_records_found = (int) $_POST['total-records-found'];
 			}
 
 			if ( isset( $_POST['query'] ) ) {
@@ -139,17 +153,44 @@
 
 			// process the response
 			if ( $SearchResponse->totalResults > 0 ) {
+				$job_path = realpath( __DIR__ . '/../cli-jobs/' ) . '/';
 
-				// add batch job form
-				$html_result .= include 'search-job_form.php';
+				if ( !empty( $SearchResponse->items ) && !empty( $SearchResponse->items[0]->europeanaCollectionName ) ) {
+					$job_identifier = $SearchResponse->items[0]->europeanaCollectionName;
+				} else {
+					$job_identifier = uniqid();
+				}
 
-				// add results example set
-				$html_result .= Response_Helper::getResponseImagesWithLinks( $SearchResponse );
+				if ( is_array( $job_identifier ) && isset( $job_identifier[0] ) ) {
+					$job_identifier = $job_identifier[0];
+				}
 
-			// set no results output
+				$items = array();
+
+				foreach( $SearchResponse->items as $item ) {
+					$items[] = $item->id;
+				}
+
+				App\Helpers\Jobs::addJobToFile(
+					array(
+						'endpoint' => $SearchRequest->endpoint,
+						'items' => $items,
+						'job-identifier' => $job_identifier,
+						'output-filename' => App\Helpers\Jobs::createOutputFilename( $job_identifier ),
+						'params' => $query_string,
+						'schema' => $schema,
+						'timestamp' => time(),
+						'total-records-found' => $total_records_found
+					),
+					array(
+						'filename' => $config['dataset-jobs'],
+						'path' => $job_path
+					)
+				);
+
+				$html_result = '<pre class="prettyprint">{ success: true, message: "batch job created" }</pre>';
 			} else {
-				$html_result .= '<h3>sample result set</h3>';
-				$html_result .= '<p>no search results found</p>';
+				$html_result = '<pre class="prettyprint">{ success: false, message: "no results found" }</pre>';
 			}
 
 			// finalize html output

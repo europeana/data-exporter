@@ -2,18 +2,18 @@
 
 	$menu_items = array(
 		'search' => array(
-			'href' => '/search',
-			'page' => 'search',
+			'href' => '/search/',
+			'page' => 'search/',
 			'title' => 'search'
 		),
 		'tag' => array(
-			'href' => '/my-europeana/tag-list-search',
-			'page' => 'my-europeana/tag-list-search',
+			'href' => '/my-europeana/tag-list/',
+			'page' => 'my-europeana/tag-list/',
 			'title' => 'tag list'
 		),
 		'queue' => array(
-			'href' => '/queue',
-			'page' => 'queue',
+			'href' => '/queue/',
+			'page' => 'queue/',
 			'title' => 'queue'
 		)
 	);

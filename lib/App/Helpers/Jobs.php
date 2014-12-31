@@ -381,6 +381,7 @@ class Jobs {
 		$result = '<table class="table table-striped">';
 			$result .= '<thead>';
 				$result .= '<tr>';
+				$result .= '<th></th>';
 				$result .= '<th>identifier</th>';
 				$result .= '<th>job created</th>';
 				$result .= '<th>endpoint</th>';
@@ -392,15 +393,17 @@ class Jobs {
 			$result .= '</thead>';
 			$result .= '<tbody>';
 
-		$rows = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>';
+		$rows = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>';
+		$count = 0;
 
 		foreach( $jobs as $job ) {
-			$identifier = '';
-			$timestamp = '';
+			$delete = '<form action="/queue/delete" method="post"><button name="delete" value="job-' . $count . '" class="btn icon-delete" title="delete"></button></form>';
 			$endpoint = '';
+			$errors = 0;
+			$identifier = '';
 			$params = '';
 			$remaining_records = 0;
-			$errors = 0;
+			$timestamp = '';
 			$total_records_found = 0;
 
 			if ( isset( $job['job-identifier'] ) ) {
@@ -436,6 +439,7 @@ class Jobs {
 
 			$result .= sprintf(
 				$rows,
+				$delete,
 				$identifier,
 				$timestamp,
 				$endpoint,
@@ -444,6 +448,8 @@ class Jobs {
 				$errors,
 				$total_records_found
 			);
+
+			$count += 1;
 		}
 
 		$result .= '</tbody>';

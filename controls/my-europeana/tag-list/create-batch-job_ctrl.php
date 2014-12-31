@@ -5,7 +5,7 @@
 	 */
 	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
 
-	$Page->page = 'my-europeana/tag-list-create-batch-job';
+	$Page->page = 'my-europeana/tag-list/create-batch-job';
 	$Page->title = 'my europeana - tag list create batch job, ' . $config['site-name'];
 	$Page->heading = $config['site-name'];
 	$Page->view = 'html-layout_tpl.php';
