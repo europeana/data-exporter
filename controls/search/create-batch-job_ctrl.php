@@ -153,7 +153,7 @@
 
 			// process the response
 			if ( $SearchResponse->totalResults > 0 ) {
-				$job_path = realpath( __DIR__ . '/../cli-jobs/' ) . '/';
+				$job_path = realpath( APPLICATION_PATH . '/cli-jobs/' ) . '/';
 
 				if ( !empty( $SearchResponse->items ) && !empty( $SearchResponse->items[0]->europeanaCollectionName ) ) {
 					$job_identifier = $SearchResponse->items[0]->europeanaCollectionName;

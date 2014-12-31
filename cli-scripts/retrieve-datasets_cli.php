@@ -4,8 +4,8 @@
 	include 'bootstrap.php';
 
 	$job = array();
-	$job_path = realpath( __DIR__ . '/../cli-jobs/' ) . '/';
-	$output_path = realpath( __DIR__ . '/../cli-output/' ) . '/';
+	$job_path = realpath( APPLICATION_PATH . '/cli-jobs/' ) . '/';
+	$output_path = realpath( APPLICATION_PATH . '/cli-output/' ) . '/';
 	$wskey = '';
 
 	if ( isset( $config['wskey'] ) ) {

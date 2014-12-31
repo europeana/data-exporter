@@ -9,7 +9,7 @@
 
 	try {
 
-		$job_path = realpath( __DIR__ . '/../cli-jobs/' ) . '/';
+		$job_path = realpath( APPLICATION_PATH . '/cli-jobs/' ) . '/';
 
 		$html = App\Helpers\Jobs::retrieveJobsAsHtmlTable(
 			array(

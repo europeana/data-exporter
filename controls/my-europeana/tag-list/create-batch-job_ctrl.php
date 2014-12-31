@@ -168,7 +168,7 @@
 			// process the response
 			if ( $TagResponse->items > 0 ) {
 				$items = array();
-				$job_path = realpath( __DIR__ . '/../../cli-jobs/' ) . '/';
+				$job_path = realpath( APPLICATION_PATH . '/cli-jobs/' ) . '/';
 
 				foreach( $TagResponse->items as $item ) {
 					$items[] = $item->europeanaId;
