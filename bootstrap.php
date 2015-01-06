@@ -18,7 +18,7 @@
  * display errors
  * application environment
  */
-	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development' ) {
+	if ( ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development' ) || php_sapi_name() === 'cli' ) {
 		define( 'APPLICATION_ENV', 'development' );
 		ini_set( 'display_errors', 1 );
 	} else {
@@ -26,6 +26,7 @@
 	}
 
 	define( 'APPLICATION_PATH', realpath( __DIR__ ) );
+	define( 'APPLICATION_EOL', php_sapi_name() === 'cli' ? PHP_EOL : '<br />' );
 
 
 /**
