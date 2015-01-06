@@ -14,19 +14,42 @@
 	/**
 	 * set-up variables
 	 */
+	$BatchJobHandler = new App\BatchJobs\JobHandler(
+		array(
+			'FileAdapter' => \Php\File::getInstance(),
+			'storage_path' => APPLICATION_PATH
+		)
+	);
+
 	$html = '';
+	$job_group_id = '';
 
 
 	try {
 
-		$job_path = realpath( APPLICATION_PATH . '/cli-jobs/' ) . '/';
+		do {
 
-		$html = App\Helpers\Jobs::retrieveJobsAsHtmlTable(
-			array(
-				'filename' => $config['dataset-jobs'],
-				'path' => $job_path
-			)
-		);
+			// check for a get
+			if ( empty( $_GET ) ) {
+				break;
+			}
+
+			// check for a job group id
+			if ( isset( $_GET['job-group-id'] ) ) {
+				$job_group_id = filter_var( $_GET['job-group-id'], FILTER_SANITIZE_STRING );
+			}
+
+			if ( empty( $job_group_id ) ) {
+				break;
+			}
+
+			$html .= $BatchJobHandler->getControlJob( $job_group_id );
+
+		} while ( false );
+
+		if ( empty( $html ) ) {
+			$html = $BatchJobHandler->retrieveJobsAsHtmlTable();
+		}
 
 	} catch( Exception $e ) {
 

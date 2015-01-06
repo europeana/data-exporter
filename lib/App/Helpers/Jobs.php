@@ -77,6 +77,13 @@ class Jobs {
 	}
 
 	/**
+	 * @return {string}
+	 */
+	public static function createJobGroupId() {
+		return date( 'Y-m-d_H.i.s' ) . '_' . uniqid();
+	}
+
+	/**
 	 * @param {string} $job_identifier
 	 */
 	public static function createOutputFilename( $job_identifier ) {
@@ -238,7 +245,7 @@ class Jobs {
 			throw new Exception( __METHOD__ . ': options not provided as an array' );
 		}
 
-		if ( empty( $options['job-run-limit'] ) ) {
+		if ( empty( $options['job_run_limit'] ) ) {
 			throw new Exception( __METHOD__ . ': no job run limit provided' );
 		}
 
@@ -260,7 +267,7 @@ class Jobs {
 				$endpoint = 'http://europeana.eu/api/v1/record%s.srw';
 		}
 
-		for ( $i = 0; $i < $options['job-run-limit']; $i += 1 ) {
+		for ( $i = 0; $i < $options['job_run_limit']; $i += 1 ) {
 			$item = array_shift( $job['items'] );
 			$url = sprintf( $endpoint, $item ) . '?wskey=' . $options['wskey'];
 			$xml_record = self::loadRecordFromXml( $url, $job['schema'] );

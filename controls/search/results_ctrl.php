@@ -138,13 +138,13 @@
 
 
 			// process the response
-			if ( $SearchResponse->totalResults > $config['job-max'] ) {
+			if ( $SearchResponse->totalResults > $config['job_max'] ) {
 
 				$html_result .=
 					sprintf(
-						'<h2 class="page-header">batch job</h2><p>the total results %s exceed the maximum job limit of %s items. you need to narrow down the result set in order to create a batch job.</p>',
+						'<h2 class="page-header">batch job</h2><p>the total result set of <b>%s</b> items exceeds the maximum job limit of <b>%s</b> items. you need to narrow down the result set in order to create a batch job.</p>',
 						number_format( $SearchResponse->totalResults ),
-						number_format( $config['job-max'] )
+						number_format( $config['job_max'] )
 					);
 
 				$html_result .= Response_Helper::getResponseImagesWithLinks( $SearchResponse );

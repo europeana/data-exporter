@@ -36,7 +36,6 @@
 	$tag = '';
 	$tag_request_options = array();
 	$tag_result = '';
-	$total_records_found = 0;
 
 
 	/**
@@ -111,10 +110,6 @@
 				$tag = filter_var( $_POST['tag'], FILTER_SANITIZE_STRING );
 			}
 
-			if ( isset( $_POST['total-records-found'] ) ) {
-				$total_records_found = (int) $_POST['total-records-found'];
-			}
-
 
 			// setup curl
 			$Curl = new Libcurl\Curl( array( 'curl-followlocation' => true ) ); // because of 302 Moved Temporarily response from login.do
@@ -166,38 +161,37 @@
 
 
 			// process the response
-			if ( $TagResponse->totalResults > $config['job-max'] ) {
+			// exceeded job max
+			if ( $TagResponse->totalResults > $config['job_max'] ) {
 
 				$html_result = '<pre class="prettyprint">{ success: false, message: "total results exceeded the maximum number of items per job" }</pre>';
 
+			// create the job control job
 			} elseif ( $TagResponse->items > 0 ) {
 
-				$items = array();
-				$job_path = realpath( APPLICATION_PATH . '/cli-jobs/' ) . '/';
-
-				foreach( $TagResponse->items as $item ) {
-					$items[] = $item->europeanaId;
-				}
-
-				App\Helpers\Jobs::addJobToFile(
+				$BatchJobHandler = new App\BatchJobs\JobHandler(
 					array(
-						'endpoint' => $TagRequest->endpoint,
-						'items' => $items,
-						'job-identifier' => $TagResponse->username,
-						'output-filename' => App\Helpers\Jobs::createOutputFilename( $TagResponse->username ),
-						'params' => 'tag=' . $tag . '&europeanaid=' . $europeanaid,
-						'schema' => $schema,
-						'timestamp' => time(),
-						'total-records-found' => $total_records_found
-					),
-					array(
-						'filename' => $config['dataset-jobs'],
-						'path' => $job_path
+						'FileAdapter' => \Php\File::getInstance(),
+						'storage_path' => APPLICATION_PATH
 					)
 				);
 
-				$html_result .= '<pre class="prettyprint">{ success: true, message: "batch job created" }</pre>';
+				$ControlJob = new App\BatchJobs\ControlJob(
+					array(
+						'endpoint' => $TagRequest->getEndpoint(),
+						'job_group_id' => $BatchJobHandler->getJobGroupId(),
+						'output_filename' => $BatchJobHandler->getOutputFilename(),
+						'params' => 'tag=' . $tag . '&europeanaid=' . $europeanaid,
+						'schema' => $schema,
+						'timestamp' => time(),
+						'total_records_found' => $TagResponse->totalResults
+					)
+				);
 
+				$BatchJobHandler->createControlJob( $ControlJob );
+				header( 'Location: /queue/?job-group-id=' . urlencode( $ControlJob->job_group_id ) );
+
+			// no results
 			} else {
 
 				$html_result = '<pre class="prettyprint">{ success: false, message: "no results found" }</pre>';
@@ -211,15 +205,8 @@
 
 	} catch( Exception $e ) {
 
-		$msg = '<p class="error">%s</p>';
-		$parts = explode( 'Array', $e->getMessage(), 2 );
-
-		if ( count( $parts ) === 2 ) {
-			$html_result .= sprintf( $msg, nl2br( $parts[0] ) );
-			$json = $parts[1];
-		} else {
-			$html_result .= sprintf( $msg, $e->getMessage() );
-		}
+		$html_result .= '<p class="error">' . $e->getMessage() . '</p>';
+		$html_result .= '<pre class="prettyprint">{ success: false, message: "application exception" }</pre>';
 
 	}
 

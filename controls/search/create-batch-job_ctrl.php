@@ -152,50 +152,41 @@
 
 
 			// process the response
-			if ( $SearchResponse->totalResults > $config['job-max'] ) {
+			// exceeded job max
+			if ( $SearchResponse->totalResults > $config['job_max'] ) {
 
 				$html_result = '<pre class="prettyprint">{ success: false, message: "total results exceeded the maximum number of items per job" }</pre>';
 
+			// create the job control job
 			} elseif ( $SearchResponse->totalResults > 0 ) {
 
-				$job_path = realpath( APPLICATION_PATH . '/cli-jobs/' ) . '/';
-
-				if ( !empty( $SearchResponse->items ) && !empty( $SearchResponse->items[0]->europeanaCollectionName ) ) {
-					$job_identifier = $SearchResponse->items[0]->europeanaCollectionName;
-				} else {
-					$job_identifier = uniqid();
-				}
-
-				if ( is_array( $job_identifier ) && isset( $job_identifier[0] ) ) {
-					$job_identifier = $job_identifier[0];
-				}
-
-				$items = array();
-
-				foreach( $SearchResponse->items as $item ) {
-					$items[] = $item->id;
-				}
-
-				App\Helpers\Jobs::addJobToFile(
+				$BatchJobHandler = new App\BatchJobs\JobHandler(
 					array(
-						'endpoint' => $SearchRequest->endpoint,
-						'items' => $items,
-						'job-identifier' => $job_identifier,
-						'output-filename' => App\Helpers\Jobs::createOutputFilename( $job_identifier ),
-						'params' => $query_string,
-						'schema' => $schema,
-						'timestamp' => time(),
-						'total-records-found' => $total_records_found
-					),
-					array(
-						'filename' => $config['dataset-jobs'],
-						'path' => $job_path
+						'FileAdapter' => \Php\File::getInstance(),
+						'storage_path' => APPLICATION_PATH
 					)
 				);
 
-				$html_result = '<pre class="prettyprint">{ success: true, message: "batch job created" }</pre>';
+				$ControlJob = new App\BatchJobs\ControlJob(
+					array(
+						'endpoint' => $SearchRequest->getEndpoint(),
+						'job_group_id' => $BatchJobHandler->getJobGroupId(),
+						'output_filename' => $BatchJobHandler->getOutputFilename(),
+						'params' => 'tag=' . $query_string,
+						'schema' => $schema,
+						'timestamp' => time(),
+						'total_records_found' => $SearchResponse->totalResults
+					)
+				);
+
+				$BatchJobHandler->createControlJob( $ControlJob );
+				header( 'Location: /queue/?job-group-id=' . urlencode( $ControlJob->job_group_id ) );
+
+			// no results
 			} else {
+
 				$html_result = '<pre class="prettyprint">{ success: false, message: "no results found" }</pre>';
+
 			}
 
 			// finalize html output

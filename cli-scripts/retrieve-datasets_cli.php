@@ -30,7 +30,7 @@
 			$job = App\Helpers\Jobs::processJob(
 				$job,
 				array(
-					'job-run-limit' => $config['job-run-limit'],
+					'job_run_limit' => $config['job_run_limit'],
 					'output-path' => $output_path,
 					'wskey' => $wskey
 				)
