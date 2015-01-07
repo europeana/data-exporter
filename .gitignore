@@ -1,4 +1,4 @@
 .htaccess
 config.ini
-cli-jobs/*.php
+cli-jobs/**/*
 cli-output/*.xml
