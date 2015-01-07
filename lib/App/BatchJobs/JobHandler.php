@@ -73,12 +73,6 @@ class JobHandler {
 	 */
 	protected $job_group_id;
 
-	/**
-	 * @var {string}
-	 */
-	protected $job_group_path;
-
-
 
 	/**
 	 * @param {array} $options
@@ -151,7 +145,7 @@ class JobHandler {
 			array(
 				'content' => $content,
 				'filename' => $this->getControlJobFilename( $ControlJob ),
-				'storage_path' => $this->getJobPath( $ControlJob )
+				'storage_path' => $this->getJobPath( 'job_group_path', $ControlJob )
 			)
 		);
 	}
@@ -185,7 +179,7 @@ class JobHandler {
 			array(
 				'content' => $content,
 				'filename' => $this->getJobFilename( $Job ),
-				'storage_path' => $this->getToProcessPath( $Job )
+				'storage_path' => $this->getJobPath( 'job_to_process_path', $Job )
 			)
 		);
 	}
@@ -196,13 +190,13 @@ class JobHandler {
 	public function destroy( array $options = array() ) {}
 
 	protected function ensureDirectories() {
-		if ( !is_dir( $this->getJobGroupPath() ) ) {
-			$this->createDirectory( $this->storage_path . '/' . $this->getJobGroupPath() );
-			$this->createDirectory( $this->storage_path . '/' . $this->getJobGroupPath() . '/' . $this->job_failed_path );
-			$this->createDirectory( $this->storage_path . '/' . $this->getJobGroupPath() . '/' . $this->job_output_path );
-			$this->createDirectory( $this->storage_path . '/' . $this->getJobGroupPath() . '/' . $this->job_processing_path );
-			$this->createDirectory( $this->storage_path . '/' . $this->getJobGroupPath() . '/' . $this->job_succeeded_path );
-			$this->createDirectory( $this->storage_path . '/' . $this->getJobGroupPath() . '/' . $this->job_to_process_path );
+		if ( !is_dir( $this->getJobPath( 'job_group_path' ) ) ) {
+			$this->createDirectory( $this->getJobPath( 'job_group_path' ) );
+			$this->createDirectory( $this->getJobPath( 'job_failed_path' ) );
+			$this->createDirectory( $this->getJobPath( 'job_output_path' )  );
+			$this->createDirectory( $this->getJobPath( 'job_processing_path' )  );
+			$this->createDirectory( $this->getJobPath( 'job_succeeded_path' )  );
+			$this->createDirectory( $this->getJobPath( 'job_to_process_path' )  );
 		}
 	}
 
@@ -217,7 +211,6 @@ class JobHandler {
 		$this->job_archive_path = 'archive';
 		$this->job_completed_groups_path = 'completed';
 		$this->job_group_id = '';
-		$this->job_group_path = '';
 		$this->job_failed_path = 'failed';
 		$this->job_filename_prefix = 'job-';
 		$this->job_output_path = 'output';
@@ -236,20 +229,12 @@ class JobHandler {
 		return $this->job_group_id;
 	}
 
-	public function getJobGroupPath() {
-		if ( empty( $this->job_group_path ) ) {
-			$this->job_group_path = $this->job_path . '/' . $this->getJobGroupId();
-		}
-
-		return $this->job_group_path;
-	}
-
 	/**
 	 * @todo implement this method
 	 * @return {string}
 	 */
 	public function getControlJob( $job_group_id = '' ) {
-		return 'your batch job was created successfully. note this job group id for future reference: <code>' . filter_var( $job_group_id, FILTER_SANITIZE_STRING ) . '</code>';
+		return 'your batch job was created successfully.<br />note this job group id for future reference: <code>' . filter_var( $job_group_id, FILTER_SANITIZE_STRING ) . '</code>';
 	}
 
 	/**
@@ -258,6 +243,23 @@ class JobHandler {
 	 */
 	protected function getControlJobFilename( ControlJob $ControlJob ) {
 		return $this->control_job_filename . '.php';
+	}
+
+	/**
+	 * @param {\App\BatchJobs\Job}
+	 * @throws {\Php\Exception}
+	 * @return {string}
+	 */
+	protected function getJobAsXml( Job $Job ) {
+		$properties = get_object_vars( $Job );
+		$result = '<batch_job>' . PHP_EOL;
+
+		foreach( $properties as $key => $value ) {
+			$result .= chr(9) . '<' . $key . '>' . htmlspecialchars( $value ) . '</' . $key . '>' . PHP_EOL;
+		}
+
+		$result .= '</batch_job>';
+		return $result;
 	}
 
 	/**
@@ -276,32 +278,34 @@ class JobHandler {
 	}
 
 	/**
-	 * @todo move the job group to complete folder
+	 * retrieves the first job to be processed from $this->job_path
+	 *
+	 * @return {null|\App\BatchJobs\Job}
 	 */
-	protected function getJobFromQueue() {
-		$result = '';
+	public function getJobFromQueue() {
+		$result = null;
+		$filepath_and_name = '';
 		$job_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_path );
 
+		// find a job directory
 		foreach ( $job_directory as $job_directory_fileinfo ) {
 			if ( !$job_directory_fileinfo->isDot() ) {
 				if ( $job_directory_fileinfo->isDir() ) {
 					$job_group_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_path  . '/' . $job_directory_fileinfo->getFilename() . '/' . $this->job_to_process_path );
 
+					// search the job directory for a job in the $this->job_to_process_path
 					foreach ( $job_group_directory as $job_group_directory_fileinfo ) {
 						if ( !$job_group_directory_fileinfo->isDot() && !$job_group_directory_fileinfo->isDir() ) {
-							$result = $this->storage_path . '/' . $this->job_path  . '/' . $job_directory_fileinfo->getFilename() . '/' . $this->job_to_process_path . '/' . $job_group_directory_fileinfo->getFilename();
+							$filepath_and_name = $this->storage_path . '/' . $this->job_path  . '/' . $job_directory_fileinfo->getFilename() . '/' . $this->job_to_process_path . '/' . $job_group_directory_fileinfo->getFilename();
 							break;
 						}
 					}
 
-					// nothing was in the directory so this group must be done. do we move it now? is there a chance another job run may be busy with it?
-					// maybe should check the directory again after a write to the
-					if ( !empty( $result ) ) {
+					// found a job, so stop searching
+					if ( !empty( $filepath_and_name ) && file_exists( $filepath_and_name ) ) {
+						$result = new \App\BatchJobs\Job( include $filepath_and_name );
 						break;
 					}
-
-
-					//$jobs[$count]['job_to_process'] = $job_group_fileinfo->getFilename() . '/' . $this->job_to_process_path;
 				}
 			}
 		}
@@ -310,17 +314,50 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {\App\BatchJobs\ControlJob} $ControlJob
+	 * @param {string} $type
+	 * @param {\App\BatchJobs\ControlJob|\App\BatchJobs\Job} $Job
+	 *
 	 * @return {string}
+	 * an absolute storage path
 	 */
-	protected function getJobPath( ControlJob $ControlJob ) {
-		if ( !empty( $ControlJob ) ) {
-			$job_group_id = $ControlJob->job_group_id;
+	protected function getJobPath( $type = '', $Job = null ) {
+		$result = '';
+
+		if ( !empty( $Job ) ) {
+			$job_group_id = $Job->job_group_id;
 		} else {
 			$job_group_id = $this->getJobGroupId();
 		}
 
-		return $this->storage_path . '/' . $this->job_path . '/' . $job_group_id;
+		$storage_group_path = $this->storage_path . '/' . $this->job_path . '/' . $job_group_id;
+
+		switch( $type ) {
+			case 'job_group_path':
+				$result = $storage_group_path;
+				break;
+
+			case 'job_failed_path':
+				$result = $storage_group_path . '/'  . $this->job_failed_path;
+				break;
+
+			case 'job_output_path':
+				$result = $storage_group_path . '/'  . $this->job_output_path;
+				break;
+
+			case 'job_processing_path':
+				$result = $storage_group_path . '/'  . $this->job_processing_path;
+				break;
+
+			case 'job_succeeded_path':
+				$result = $storage_group_path . '/'  . $this->job_succeeded_path;
+				break;
+
+			case 'job_to_process_path':
+				$result = $storage_group_path . '/'  . $this->job_to_process_path;
+				break;
+		}
+
+		return $result;
 	}
 
 	/**
@@ -341,7 +378,7 @@ class JobHandler {
 	 * @param {\App\BatchJobs\Job} $Job
 	 * @return {string}
 	 */
-	protected function getOutputPath( Job $Job = null ) {
+	protected function getJobOutputPath( Job $Job = null ) {
 		if ( !empty( $Job ) ) {
 			$job_group_id = $Job->job_group_id;
 		} else {
@@ -355,7 +392,7 @@ class JobHandler {
 	 * @param {\App\BatchJobs\Job} $Job
 	 * @return {string}
 	 */
-	protected function getToProcessPath( Job $Job = null ) {
+	protected function getJobToProcessPath( Job $Job = null ) {
 		if ( !empty( $Job ) ) {
 			$job_group_id = $Job->job_group_id;
 		} else {
@@ -369,11 +406,65 @@ class JobHandler {
 	 * @param {\App\BatchJobs\Job} $Job
 	 * @return {string}
 	 */
-	protected static function openXMLFile( Job $Job ) {
+	protected function getJobProcessingPath( Job $Job = null ) {
+		if ( !empty( $Job ) ) {
+			$job_group_id = $Job->job_group_id;
+		} else {
+			$job_group_id = $this->getJobGroupId();
+		}
+
+		return $this->storage_path . '/' . $this->job_path . '/' . $job_group_id . '/'  . $this->job_processing_path;
+	}
+
+	/**
+	 * @param {string} $dest
+	 * @param {\App\BatchJobs\Job} $Job
+	 * @return {bool}
+	 */
+	public function moveJob( $dest = '', $Job = null ) {
+		if ( empty( $Job ) || !( $Job instanceof \App\BatchJobs\Job ) ) {
+			throw new Exception( __METHOD__ . '() Job provided is not a valid Job' );
+		}
+
+		$dest_path = '';
+
+		switch( $dest ) {
+			case 'job_processing_path':
+				$source_path = $this->getJobPath( 'job_to_process_path', $Job );
+				$dest_path = $this->getJobPath( $dest, $Job );
+				break;
+
+			case 'job_failed_path':
+				$source_path = $this->getJobPath( 'job_processing_path', $Job );
+				$dest_path = $this->getJobPath( $dest, $Job );
+				break;
+
+			case 'job_succeeded_path':
+				$source_path = $this->getJobPath( 'job_processing_path', $Job );
+				$dest_path = $this->getJobPath( $dest, $Job );
+				break;
+		}
+
+		return $this->FileAdapter->move(
+			array(
+				'source_path' => $source_path,
+				'source_filename' => $this->getJobFilename( $Job ),
+				'dest_path' => $dest_path,
+				'dest_filename' => $this->getJobFilename( $Job ),
+			)
+		);
+	}
+
+	/**
+	 * @param {\App\BatchJobs\Job} $Job
+	 * @return {string}
+	 */
+	protected function openXMLFile( Job $Job ) {
 		switch ( $Job->schema ) {
 			case 'edm':
 				return
 					'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' . PHP_EOL .
+					$this->getJobAsXml( $Job ) . PHP_EOL .
 					'<records>' . PHP_EOL;
 				break;
 
@@ -381,6 +472,7 @@ class JobHandler {
 				return
 					'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' . PHP_EOL .
 					'<searchRetrieveResponse xmlns:tel="http://krait.kb.nl/coop/tel/handbook/telterms.html" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:enrichment="http://www.europeana.eu/schemas/ese/enrichment/" xmlns:srw="http://www.loc.gov/zing/srw/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:europeana="http://www.europeana.eu" xmlns:xcql="http://www.loc.gov/zing/cql/xcql/" xmlns:diag="http://www.loc.gov/zing/srw/diagnostic/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' . PHP_EOL .
+					$this->getJobAsXml( $Job ) . PHP_EOL .
 					'<records>' . PHP_EOL;
 				break;
 		}
@@ -444,22 +536,31 @@ class JobHandler {
 	/**
 	 * control method that will process the response and add XML snippets to an output file.
 	 *
-	 * @param {\App\BatchJobs\Job} $Job
 	 * @param {array} $options
+	 * @param {\App\BatchJobs\Job} $options['Job']
+	 * @param {string} $options['wskey']
+	 *
+	 * @throws {\Php\Exception}
 	 * @return {bool}
 	 */
-	public function processJob( Job $Job, array $options = array() ) {
-		$Job->validate();
-		$wskey = '';
+	public function processJob( array $options = array() ) {
+		if ( !isset( $options['Job'] ) || !( $options['Job'] instanceof \App\BatchJobs\Job ) ) {
+			throw new Exception( __METHOD__ . '() no valid Job provided.' );
+		} else {
+			$Job = $options['Job'];
+		}
 
-		if ( isset( $options['wskey'] ) ) {
-			$wskey = $options['wskey'];
+		if ( isset( $options['wskey'] ) && is_string( $options['wskey'] ) ) {
+			$wskey = filter_var( $options['wskey'], FILTER_SANITIZE_STRING );
+		} else {
+			$wskey = '';
 		}
 
 		// set-up the record request
 		$RecordRequest = null;
 		$Curl = new \Libcurl\Curl();
 		$Curl->setHttpHeader( array( 'Accept: text/xml, application/xml' ) );
+
 		$request_options = array(
 			'record_id' => $Job->record_id,
 			'RequestService' => $Curl,
@@ -491,25 +592,6 @@ class JobHandler {
 		}
 
 		return $this->saveXMLSnippet( $Job, $RecordResponse->xml_snippet_as_string );
-	}
-
-	/**
-	 * retrieves the first job to be processed from $this->job_path
-	 */
-	public function retrieve() {
-		$result = array(
-			'file_path_and_name' => '',
-			'job_details' => ''
-		);
-
-		if ( empty( $result ) ) {
-			return $result;
-		}
-
-		$result['file_path_and_name'] = $this->getJobFromQueue();
-		$result['job'] = include $result['file_path_and_name'];
-
-		return $result;
 	}
 
 	/**
@@ -599,14 +681,14 @@ class JobHandler {
 
 		$xml_snippet = $xml_snippet . PHP_EOL;
 
-		if ( !file_exists( $this->getOutputPath( $Job ) . '/' . $Job->output_filename ) ) {
+		if ( !file_exists( $this->getJobOutputPath( $Job ) . '/' . $Job->output_filename ) ) {
 			$xml_snippet = $this->openXMLFile( $Job ) . $xml_snippet;
 
 			return $this->FileAdapter->create(
 				array(
 					'content' => $xml_snippet,
 					'filename' => $Job->output_filename,
-					'storage_path' => $this->getOutputPath( $Job )
+					'storage_path' => $this->getJobOutputPath( $Job )
 				)
 			);
 		} else {
@@ -614,7 +696,7 @@ class JobHandler {
 				array(
 					'content' => $xml_snippet,
 					'filename' => $Job->output_filename,
-					'storage_path' => $this->getOutputPath( $Job )
+					'storage_path' => $this->getJobOutputPath( $Job )
 				)
 			);
 		}

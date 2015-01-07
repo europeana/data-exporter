@@ -169,6 +169,8 @@
 			// create the job control job
 			} elseif ( $TagResponse->items > 0 ) {
 
+				$BatchJob = new App\BatchJobs\Job( array(), true );
+
 				$BatchJobHandler = new App\BatchJobs\JobHandler(
 					array(
 						'FileAdapter' => \Php\File::getInstance(),
@@ -176,8 +178,36 @@
 					)
 				);
 
+				$count = 1;
+				$job_group_id = $BatchJobHandler->getJobGroupId();
+				$output_filename = $BatchJobHandler->getOutputFilename();
+
+				foreach( $TagResponse->items as $item ) {
+					$BatchJob->reset();
+
+					$BatchJob->populate(
+						array(
+							'endpoint' => $TagRequest->getEndpoint(),
+							'job_group_id' => $job_group_id,
+							'job_id' => $count,
+							'output_filename' => $output_filename,
+							'params' => 'tag=' . $tag . '&europeanaid=' . $europeanaid,
+							'record_id' => $item->europeanaId,
+							'schema' => $schema,
+							'start' => 0,
+							'timestamp' => time(),
+							'total_records_found' => $TagResponse->totalResults
+						)
+					);
+
+					$BatchJobHandler->createJob( $BatchJob );
+					$count += 1;
+				}
+
 				$ControlJob = new App\BatchJobs\ControlJob(
 					array(
+						'all_jobs_created' => true,
+						'creating_jobs' => false,
 						'endpoint' => $TagRequest->getEndpoint(),
 						'job_group_id' => $BatchJobHandler->getJobGroupId(),
 						'output_filename' => $BatchJobHandler->getOutputFilename(),

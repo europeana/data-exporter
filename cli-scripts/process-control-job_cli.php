@@ -11,6 +11,7 @@
 
 			// @todo implement this method
 			return;
+
 			$BatchJob = new App\BatchJobs\Job();
 
 			$BatchJobHandler = new App\BatchJobs\JobHandler(
@@ -27,7 +28,7 @@
 			foreach( $TagResponse->items as $item ) {
 				$BatchJob->populate(
 					array(
-						'endpoint' => $TagRequest->endpoint,
+						'endpoint' => $TagRequest->getEndpoint(),
 						'record_id' => $item->europeanaId,
 						'job_group_id' => $job_group_id,
 						'job_id' => $count,
@@ -46,5 +47,7 @@
 		} while( false );
 
 	} catch ( Exception $e ) {
+
 		error_log( $e->getMessage() );
+
 	}

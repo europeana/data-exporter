@@ -441,7 +441,7 @@ class Jobs {
 			}
 
 			if ( isset( $job['total-records-found'] ) ) {
-				$total_records_found = filter_var( $job['total-records-found'], FILTER_SANITIZE_NUMBER_INT );
+				$total_records_found = (int) $job['total-records-found'];
 			}
 
 			$result .= sprintf(
