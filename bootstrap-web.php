@@ -1,5 +1,4 @@
 <?php
-
 /**
  * session
  */
@@ -61,7 +60,7 @@
  *  if still no control page is found, defaults to pg = 404
  */
 	$Page->page = '404';
-	$default_route = 'search';
+	$default_route = 'my-europeana/tag-list';
 	$route = $url['path'] == '/' ? $default_route : trim( $url['path'], '/' );
 
 	if ( file_exists( 'controls/' . $route . '_ctrl.php' ) ) {

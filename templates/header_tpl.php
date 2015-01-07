@@ -1,11 +1,10 @@
 <?php
-
 	$menu_items = array(
-		'search' => array(
-			'href' => '/search/',
-			'page' => 'search/',
-			'title' => 'search'
-		),
+		//'search' => array(
+		//	'href' => '/search/',
+		//	'page' => 'search/',
+		//	'title' => 'search'
+		//),
 		'tag' => array(
 			'href' => '/my-europeana/tag-list/',
 			'page' => 'my-europeana/tag-list/',
