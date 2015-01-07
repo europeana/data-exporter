@@ -7,18 +7,18 @@
 	use \Europeana\Api\Helpers\Request as Request_Helper;
 	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
 
-	$Page->page = 'search/create-batch-job';
-	$Page->title = 'Create Batch Job - Search: ' . $config['site-name'];
-	$Page->heading = 'Create Batch Job - Search: ' . $config['site-name'];
-	$Page->view = 'html-layout_tpl.php';
+	$WebPage->page = 'search/create-batch-job';
+	$WebPage->title = 'Create Batch Job - Search: ' . $config['site-name'];
+	$WebPage->heading = 'Create Batch Job - Search: ' . $config['site-name'];
+	$WebPage->view = 'html-layout_tpl.php';
 
 	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
-		$Page->addScript( new W3C\Html\Script( array( 'src' => '/js/prettify.js' ) ) );
+		$WebPage->addScript( new W3C\Html\Script( array( 'src' => '/js/prettify.js' ) ) );
 	} else {
-		$Page->addScript( new W3C\Html\Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
+		$WebPage->addScript( new W3C\Html\Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
 	}
 
-	$Page->addScript( new W3C\Html\Script( array( 'content' => 'prettyPrint();' ) ) );
+	$WebPage->addScript( new W3C\Html\Script( array( 'content' => 'prettyPrint();' ) ) );
 
 
 	/**
@@ -212,5 +212,5 @@
 	/**
 	 * set-up page view
 	 */
-	$Page->html = $html_result;
-	include $Page->view;
+	$WebPage->html = $html_result;
+	include $WebPage->view;

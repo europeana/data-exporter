@@ -17,10 +17,10 @@
 		)
 	);
 
-	$Nav = new App\Nav( $menu_items );
+	$Nav = new W3c\Html\Helpers\Nav( $menu_items );
 ?>
 <div id="header">
 	<a class="logo" href="/" title="<?php echo $config['site-name']; ?>"></a>
-	<h1><?php echo $Page->heading; ?></h1>
-	<?php echo $Nav->getNavAsUl( 'nav', $Page->page ); ?>
+	<h1><?php echo $WebPage->heading; ?></h1>
+	<?php echo $Nav->getNavAsUl( 'nav', $WebPage->page ); ?>
 </div>

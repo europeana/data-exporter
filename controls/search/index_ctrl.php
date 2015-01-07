@@ -5,10 +5,10 @@
 	 */
 	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
 
-	$Page->page = 'search/';
-	$Page->title = 'Search: ' . $config['site-name'];
-	$Page->heading = 'Search: ' . $config['site-name'];
-	$Page->view = 'html-layout_tpl.php';
+	$WebPage->page = 'search/';
+	$WebPage->title = 'Search: ' . $config['site-name'];
+	$WebPage->heading = 'Search: ' . $config['site-name'];
+	$WebPage->view = 'html-layout_tpl.php';
 
 
 	/**
@@ -20,5 +20,5 @@
 	/**
 	 * set-up page view
 	 */
-	$Page->html = include 'search/search_form.php';
-	include $Page->view;
+	$WebPage->html = include 'search/search_form.php';
+	include $WebPage->view;

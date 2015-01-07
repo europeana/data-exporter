@@ -25,26 +25,26 @@
 
 
 /**
- * page
+ * web page
  */
-	$Page = new App\Page();
+	$WebPage = new W3c\Html\Document();
 
 
 /**
- * page meta
+ * web page meta
  */
-	$Page->addMeta( new W3C\Html\Meta( array( 'name' => 'viewport', 'content' => 'width=device-width, initial-scale=1' ) ) );
+	$WebPage->addMeta( new W3C\Html\Meta( array( 'name' => 'viewport', 'content' => 'width=device-width, initial-scale=1' ) ) );
 
 
 /**
- * page link defaults
+ * web page link defaults
  */
 	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
-		$Page->addLink( new W3C\Html\Link( array( 'href' => '/css/prettify.css' ) ) );
-		$Page->addLink( new W3C\Html\Link( array( 'href' => '/css/css.css' ) ) );
+		$WebPage->addLink( new W3C\Html\Link( array( 'href' => '/css/prettify.css' ) ) );
+		$WebPage->addLink( new W3C\Html\Link( array( 'href' => '/css/css.css' ) ) );
 	} else {
-		$Page->addStyle( new W3C\Html\Style( array( 'content' => file_get_contents( 'public/css/prettify.min.css' ) ) ) );
-		$Page->addStyle( new W3C\Html\Style( array( 'content' => file_get_contents( 'public/css/css.min.css' ) ) ) );
+		$WebPage->addStyle( new W3C\Html\Style( array( 'content' => file_get_contents( 'public/css/prettify.min.css' ) ) ) );
+		$WebPage->addStyle( new W3C\Html\Style( array( 'content' => file_get_contents( 'public/css/css.min.css' ) ) ) );
 	}
 
 
@@ -59,18 +59,18 @@
  *
  *  if still no control page is found, defaults to pg = 404
  */
-	$Page->page = '404';
+	$WebPage->page = '404';
 	$default_route = 'my-europeana/tag-list';
 	$route = $url['path'] == '/' ? $default_route : trim( $url['path'], '/' );
 
 	if ( file_exists( 'controls/' . $route . '_ctrl.php' ) ) {
-		$Page->page = $route;
+		$WebPage->page = $route;
 	} else if ( file_exists( 'controls/' . $route . '/index_ctrl.php' ) ) {
-		$Page->page = $route . '/index';
+		$WebPage->page = $route . '/index';
 	}
 
 
 /**
  * page control
  */
-	include $Page->page . '_ctrl.php';
+	include $WebPage->page . '_ctrl.php';

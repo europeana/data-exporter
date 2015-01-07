@@ -5,10 +5,10 @@
 	 */
 	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
 
-	$Page->page = 'queue/';
-	$Page->title = 'Queue: ' . $config['site-name'];
-	$Page->heading = 'Queue: ' . $config['site-name'];
-	$Page->view = 'html-layout_tpl.php';
+	$WebPage->page = 'queue/';
+	$WebPage->title = 'Queue: ' . $config['site-name'];
+	$WebPage->heading = 'Queue: ' . $config['site-name'];
+	$WebPage->view = 'html-layout_tpl.php';
 
 
 	/**
@@ -61,5 +61,5 @@
 	/**
 	 * set-up page view
 	 */
-	$Page->html = $html;
-	include $Page->view;
+	$WebPage->html = $html;
+	include $WebPage->view;

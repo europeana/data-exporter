@@ -5,10 +5,10 @@
 	 */
 	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
 
-	$Page->page = 'queue/delete';
-	$Page->title = 'Delete, Queue: ' . $config['site-name'];
-	$Page->heading = 'Delete, Queue: ' . $config['site-name'];
-	$Page->view = 'html-layout_tpl.php';
+	$WebPage->page = 'queue/delete';
+	$WebPage->title = 'Delete, Queue: ' . $config['site-name'];
+	$WebPage->heading = 'Delete, Queue: ' . $config['site-name'];
+	$WebPage->view = 'html-layout_tpl.php';
 
 
 	/**
@@ -29,5 +29,5 @@
 	/**
 	 * set-up page view
 	 */
-	$Page->html = $html;
-	include $Page->view;
+	$WebPage->html = $html;
+	include $WebPage->view;
