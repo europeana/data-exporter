@@ -1,5 +1,7 @@
 <?php
 namespace App\BatchJobs;
+use \App\BatchJobs\ControlJob as ControlJob;
+use \App\BatchJobs\Job as Job;
 use Europeana\Api\Helpers\Response as Response_Helper;
 use Php\Exception;
 use Php\FileAdapterInterface;
@@ -139,7 +141,7 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {\App\BatchJobs\ControlJob} $ControlJob
+	 * @param {ControlJob} $ControlJob
 	 * @return {bool}
 	 */
 	public function createControlJob( ControlJob $ControlJob ) {
@@ -171,7 +173,7 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {\App\BatchJobs\Job} $Job
+	 * @param {Job} $Job
 	 * @throws {Exception}
 	 * @return {bool}
 	 */
@@ -211,15 +213,30 @@ class JobHandler {
 	 * the $options determine which type of job state to look for
 	 * and which job type to return
 	 *
-	 * @param {array}  $options
-	 * @param {array}  $options['job-state-paths']
-	 * @param {string} $options['job-state-paths'][] $this->allowed_state_paths
-	 * @param {string} $options['job-type'] control-job|job
+	 * @param {array} $options
 	 *
-	 * @return {null|\App\BatchJobs\JobControl|\App\BatchJobs\Job}
+	 * @param {bool} $options['job-required']
+	 * whether or not to continue looking until a Job is found
+	 * defaults to true
+	 *
+	 * @param {array} $options['job-state-paths']
+	 *
+	 * @param {string} $options['job-state-paths'][]
+	 * one of $this->allowed_state_paths
+	 *
+	 * @return {null|ControlJob} $result['ControlJob']
+	 * @return {null|Job} $result['Job']
 	 */
 	protected function findJob( array $options = array() ) {
-		$result = null;
+		$result = array(
+			'ControlJob' => null,
+			'Job' => null
+		);
+
+		if ( !isset( $options['job-required'] ) || !is_bool( $options['job-required'] ) ) {
+			$options['job-required'] = true;
+		}
+
 		$job_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_path );
 
 		// find a job group directory
@@ -229,24 +246,32 @@ class JobHandler {
 				// found a job group directory
 				if ( $job_directory_fileinfo->isDir() ) {
 
-					// look for a job in the $options['job-state-paths'][] path
+					// look for a job in the $options['job-state-paths'][]
 					foreach( $options['job-state-paths'] as $job_state_path ) {
 						$result = $this->findJobInState(
 							array(
 								'job-group' => $job_directory_fileinfo->getFilename(),
-								'job-state-path' => $job_state_path,
-								'job-type' => $options['job-type']
+								'job-required' => $options['job-required'],
+								'job-state-path' => $job_state_path
 							)
 						);
 
-						if ( !empty( $result ) ) {
+						// if a Job is not required and a ControlJob was returned, stop
+						if ( !$options['job-required'] && $result['ControlJob'] instanceof ControlJob ) {
+							break;
+
+						// if a Job  is required and a Job was returned, stop
+						} elseif ( $result['Job'] instanceof Job ) {
 							break;
 						}
+
+						// otherwise, continue to look for a Job
 					}
 				}
 			}
 
-			// continue to look for a job group directory
+			// otherwise, continue to look for a job group directory with a Job
+			// in one of the $options['job-state-paths'][]
 		}
 
 		return $result;
@@ -256,45 +281,50 @@ class JobHandler {
 	 * find a job in a given group, in a given state and return it
 	 * or the control job for the group.
 	 *
-	 * @param {array}  $options
+	 * @param {array} $options
 	 * @param {string} $options['job-group']
-	 * @param {string} $options['job-state-path'] $this->allowed_state_paths
-	 * @param {string} $options['job-type'] control-job|job
 	 *
-	 * @return {null|\App\BatchJobs\ControlJob|\App\BatchJobs\Job}
+	 * @param {bool} $options['job-required']
+	 * whether or not to continue looking until a Job is found
+	 * defaults to true
+	 *
+	 * @param {string} $options['job-state-path']
+	 * one of $this->allowed_state_paths
+	 *
+	 * @return {null|ControlJob} $result['ControlJob']
+	 * @return {null|Job} $result['Job']
 	 */
 	protected function findJobInState( array $options = array() ) {
 		if ( !in_array( $options['job-state-path'], $this->allowed_state_paths ) ) {
 			throw new Exception( __METHOD__ . '() job-state-path [' . filter_var( $options['job-state-path'], FILTER_SANITIZE_STRING ) . '] not an allowed path.' );
 		}
 
-		if ( $options['job-type'] !== 'control-job' && $options['job-type'] !== 'job' ) {
-			throw new Exception( __METHOD__ . '() job-type [' . filter_var( $options['job-type'], FILTER_SANITIZE_STRING ) . '] not a valid job type.' );
-		}
+		$result = array(
+			'ControlJob' => null,
+			'Job' => null
+		);
 
-		$result = null;
-		$control_job_filepath_and_name = '';
 		$job_filepath_and_name = '';
 		$job_state_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_path  . '/' . $options['job-group'] . '/' . $this->{$options['job-state-path']} );
 
+		if ( file_exists( $this->storage_path . '/' . $this->job_path  . '/' . $options['job-group'] . '/' . $this->control_job_filename ) ) {
+			$result['ControlJob'] = ControlJob( include $this->storage_path . '/' . $this->job_path  . '/' . $options['job-group'] . '/' . $this->control_job_filename );
+		}
+
+		// find a Job in the group directory
 		foreach ( $job_state_directory as $job_fileinfo ) {
 
-			// found a job, stop searching
+			// found a Job, stop searching
 			if ( !$job_fileinfo->isDot() && !$job_fileinfo->isDir() ) {
-				$control_job_filepath_and_name = $this->storage_path . '/' . $this->job_path  . '/' . $options['job-group'] . '/' . $this->control_job_filename;
 				$job_filepath_and_name = $this->storage_path . '/' . $this->job_path  . '/' . $options['job-group'] . '/' . $this->{$options['job-state-path']} . '/' . $job_fileinfo->getFilename();
 				break;
 			}
 
 		}
 
-		// found a job
-		if ( !empty( $control_job_filepath_and_name ) ) {
-			if ( $options['job-type'] === 'control-job' && file_exists( $control_job_filepath_and_name ) ) {
-				$result = new \App\BatchJobs\ControlJob( include $control_job_filepath_and_name );
-			} elseif ( $options['job-type'] === 'job' && file_exists( $job_filepath_and_name ) ) {
-				$result = new \App\BatchJobs\Job( include $job_filepath_and_name );
-			}
+		// if a Job exists, set $result['Job'] to that Job
+		if ( file_exists( $job_filepath_and_name ) ) {
+			$result['Job'] = new Job( include $job_filepath_and_name );
 		}
 
 		return $result;
@@ -325,21 +355,23 @@ class JobHandler {
 	}
 
 	/**
-	 * retrieves the first job group that has no more to_process or processing jobs
+	 * retrieves the first job group that has no more to process or processing jobs
 	 *
-	 * @return {null|\App\BatchJobs\JobControl}
+	 * @return {null|ControlJob}
 	 */
 	public function getCompletedJobGroup() {
-		$result = null;
-
 		$result = $this->findJob(
 			array(
 				'job-state-paths' => array( 'job_to_process_path', 'job_processing_path' ),
-				'job-type' => 'control-job'
+				'job-required' => false
 			)
 		);
 
-		return $result;
+		if ( empty( $result['Job'] ) ) {
+			return $result['ControlJob'];
+		}
+
+		return null;
 	}
 
 	public function getJobGroupId() {
@@ -359,7 +391,7 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {\App\BatchJobs\ControlJob}
+	 * @param {ControlJob}
 	 * @return {string}
 	 */
 	protected function getControlJobFilename( ControlJob $ControlJob ) {
@@ -367,7 +399,7 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {\App\BatchJobs\Job}
+	 * @param {Job}
 	 * @throws {\Php\Exception}
 	 * @return {string}
 	 */
@@ -384,7 +416,7 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {\App\BatchJobs\Job} $Job
+	 * @param {Job} $Job
 	 * @return {string}
 	 */
 	protected function getJobFilename( Job $Job ) {
@@ -401,24 +433,23 @@ class JobHandler {
 	/**
 	 * retrieves the first job to be processed.
 	 *
-	 * @return {null|\App\BatchJobs\Job}
+	 * @return {null|Job}
 	 */
 	public function getJobFromQueue() {
 		$result = null;
 
 		$result = $this->findJob(
 			array(
-				'job-state-paths' => array( 'job_to_process_path' ),
-				'job-type' => 'job'
+				'job-state-paths' => array( 'job_to_process_path' )
 			)
 		);
 
-		return $result;
+		return $result['Job'];
 	}
 
 	/**
 	 * @param {string} $type
-	 * @param {\App\BatchJobs\ControlJob|\App\BatchJobs\Job} $Job
+	 * @param {ControlJob|Job} $Job
 	 *
 	 * @return {string}
 	 * an absolute storage path
@@ -464,7 +495,7 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {\App\BatchJobs\Job} $Job
+	 * @param {Job} $Job
 	 * @return {string}
 	 */
 	public function getOutputFilename( Job $Job = null ) {
@@ -478,7 +509,7 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {\App\BatchJobs\Job} $Job
+	 * @param {Job} $Job
 	 * @return {string}
 	 */
 	protected function getJobOutputPath( Job $Job = null ) {
@@ -492,7 +523,7 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {\App\BatchJobs\Job} $Job
+	 * @param {Job} $Job
 	 * @return {string}
 	 */
 	protected function getJobToProcessPath( Job $Job = null ) {
@@ -506,7 +537,7 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {\App\BatchJobs\Job} $Job
+	 * @param {Job} $Job
 	 * @return {string}
 	 */
 	protected function getJobProcessingPath( Job $Job = null ) {
@@ -521,11 +552,11 @@ class JobHandler {
 
 	/**
 	 * @param {string} $dest
-	 * @param {\App\BatchJobs\Job} $Job
+	 * @param {Job} $Job
 	 * @return {bool}
 	 */
 	public function moveJob( $dest = '', $Job = null ) {
-		if ( empty( $Job ) || !( $Job instanceof \App\BatchJobs\Job ) ) {
+		if ( empty( $Job ) || !( $Job instanceof Job ) ) {
 			throw new Exception( __METHOD__ . '() Job provided is not a valid Job' );
 		}
 
@@ -559,7 +590,7 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {\App\BatchJobs\Job} $Job
+	 * @param {Job} $Job
 	 * @return {string}
 	 */
 	protected function openXmlFile( Job $Job ) {
@@ -640,14 +671,14 @@ class JobHandler {
 	 * control method that will process the response and add XML snippets to an output file.
 	 *
 	 * @param {array} $options
-	 * @param {\App\BatchJobs\Job} $options['Job']
+	 * @param {Job} $options['Job']
 	 * @param {string} $options['wskey']
 	 *
 	 * @throws {\Php\Exception}
 	 * @return {bool}
 	 */
 	public function processJob( array $options = array() ) {
-		if ( !isset( $options['Job'] ) || !( $options['Job'] instanceof \App\BatchJobs\Job ) ) {
+		if ( !isset( $options['Job'] ) || !( $options['Job'] instanceof Job ) ) {
 			throw new Exception( __METHOD__ . '() no valid Job provided.' );
 		} else {
 			$Job = $options['Job'];
@@ -771,7 +802,7 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {\App\BatchJobs\Job} $Job
+	 * @param {Job} $Job
 	 * @param {string} $xml_snippet
 	 *
 	 * @throws {\Php\Exception}

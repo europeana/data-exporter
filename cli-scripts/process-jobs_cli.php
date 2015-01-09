@@ -3,13 +3,16 @@
 	chdir( dirname( __DIR__ ) );
 	include 'bootstrap.php';
 
+	use \App\BatchJobs\Job as Job;
+	use App\BatchJobs\JobHandler as JobHandler;
+
 	$job = array();
 
 	try {
 
 		do {
 
-			$BatchJobHandler = new App\BatchJobs\JobHandler(
+			$BatchJobHandler = new JobHandler(
 				array(
 					'FileAdapter' => \Php\File::getInstance(),
 					'storage_path' => APPLICATION_PATH
@@ -23,7 +26,7 @@
 				// get the first job to process
 				$Job = $BatchJobHandler->getJobFromQueue();
 
-				if ( !( $Job instanceof \App\BatchJobs\Job ) ) {
+				if ( !( $Job instanceof Job ) ) {
 					break;
 				}
 
@@ -49,6 +52,7 @@
 					$result = $BatchJobHandler->moveJob( 'job_succeeded_path', $Job );
 				}
 
+				unset( $Job, $result );
 				$count += 1;
 
 			} while ( $count < $config['job_run_limit'] );
