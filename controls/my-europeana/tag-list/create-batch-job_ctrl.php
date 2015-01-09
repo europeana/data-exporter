@@ -196,7 +196,8 @@
 							'schema' => $schema,
 							'start' => 0,
 							'timestamp' => time(),
-							'total_records_found' => $TagResponse->totalResults
+							'total_records_found' => $TagResponse->totalResults,
+							'username' => $TagResponse->username
 						)
 					);
 

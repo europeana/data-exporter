@@ -57,6 +57,11 @@ class Job {
 	 */
 	public $total_records_found;
 
+	/**
+	 * @var {string}
+	 */
+	public $username;
+
 
 	/**
 	 * @param {array} $options
@@ -83,6 +88,7 @@ class Job {
 		$this->start = 0;
 		$this->timestamp = 0;
 		$this->total_records_found = 0;
+		$this->username = '';
 	}
 
 	/**
@@ -119,7 +125,6 @@ class Job {
 
 		if ( isset( $options['start'] ) && is_int( $options['start'] ) ) {
 			$this->start = (int) $options['start'];
-
 		}
 
 		if ( isset( $options['timestamp'] ) && is_int( $options['timestamp'] ) ) {
@@ -128,6 +133,10 @@ class Job {
 
 		if ( isset( $options['total_records_found'] ) && is_int( $options['total_records_found'] ) ) {
 			$this->total_records_found = (int) $options['total_records_found'];
+		}
+
+		if ( isset( $options['username'] ) && is_string( $options['username'] ) ) {
+			$this->username = filter_var( $options['username'], FILTER_SANITIZE_STRING );
 		}
 
 		$this->validate();

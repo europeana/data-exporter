@@ -45,7 +45,7 @@
 				$result = $BatchJobHandler->moveJob( 'job_succeeded_path', $Job );
 			}
 
-		} while( false );
+		} while ( false );
 
 	} catch ( Exception $e ) {
 

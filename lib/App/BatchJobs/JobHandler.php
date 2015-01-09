@@ -69,6 +69,11 @@ class JobHandler {
 
 
 	/**
+	 * @var {array}
+	 */
+	protected $allowed_state_paths;
+
+	/**
 	 * @var {string}
 	 */
 	protected $job_group_id;
@@ -201,9 +206,99 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {array} $options
+	 * tries to find a job and return it.
+	 *
+	 * the $options determine which type of job state to look for
+	 * and which job type to return
+	 *
+	 * @param {array}  $options
+	 * @param {array}  $options['job-state-paths']
+	 * @param {string} $options['job-state-paths'][] $this->allowed_state_paths
+	 * @param {string} $options['job-type'] control-job|job
+	 *
+	 * @return {null|\App\BatchJobs\JobControl|\App\BatchJobs\Job}
 	 */
-	public function fetch( array $options = array() ) {}
+	protected function findJob( array $options = array() ) {
+		$result = null;
+		$job_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_path );
+
+		// find a job group directory
+		foreach ( $job_directory as $job_directory_fileinfo ) {
+			if ( !$job_directory_fileinfo->isDot() ) {
+
+				// found a job group directory
+				if ( $job_directory_fileinfo->isDir() ) {
+
+					// look for a job in the $options['job-state-paths'][] path
+					foreach( $options['job-state-paths'] as $job_state_path ) {
+						$result = $this->findJobInState(
+							array(
+								'job-group' => $job_directory_fileinfo->getFilename(),
+								'job-state-path' => $job_state_path,
+								'job-type' => $options['job-type']
+							)
+						);
+
+						if ( !empty( $result ) ) {
+							break;
+						}
+					}
+				}
+			}
+
+			// continue to look for a job group directory
+		}
+
+		return $result;
+	}
+
+	/**
+	 * find a job in a given group, in a given state and return it
+	 * or the control job for the group.
+	 *
+	 * @param {array}  $options
+	 * @param {string} $options['job-group']
+	 * @param {string} $options['job-state-path'] $this->allowed_state_paths
+	 * @param {string} $options['job-type'] control-job|job
+	 *
+	 * @return {null|\App\BatchJobs\ControlJob|\App\BatchJobs\Job}
+	 */
+	protected function findJobInState( array $options = array() ) {
+		if ( !in_array( $options['job-state-path'], $this->allowed_state_paths ) ) {
+			throw new Exception( __METHOD__ . '() job-state-path [' . filter_var( $options['job-state-path'], FILTER_SANITIZE_STRING ) . '] not an allowed path.' );
+		}
+
+		if ( $options['job-type'] !== 'control-job' && $options['job-type'] !== 'job' ) {
+			throw new Exception( __METHOD__ . '() job-type [' . filter_var( $options['job-type'], FILTER_SANITIZE_STRING ) . '] not a valid job type.' );
+		}
+
+		$result = null;
+		$control_job_filepath_and_name = '';
+		$job_filepath_and_name = '';
+		$job_state_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_path  . '/' . $options['job-group'] . '/' . $this->{$options['job-state-path']} );
+
+		foreach ( $job_state_directory as $job_fileinfo ) {
+
+			// found a job, stop searching
+			if ( !$job_fileinfo->isDot() && !$job_fileinfo->isDir() ) {
+				$control_job_filepath_and_name = $this->storage_path . '/' . $this->job_path  . '/' . $options['job-group'] . '/' . $this->control_job_filename;
+				$job_filepath_and_name = $this->storage_path . '/' . $this->job_path  . '/' . $options['job-group'] . '/' . $this->{$options['job-state-path']} . '/' . $job_fileinfo->getFilename();
+				break;
+			}
+
+		}
+
+		// found a job
+		if ( !empty( $control_job_filepath_and_name ) ) {
+			if ( $options['job-type'] === 'control-job' && file_exists( $control_job_filepath_and_name ) ) {
+				$result = new \App\BatchJobs\ControlJob( include $control_job_filepath_and_name );
+			} elseif ( $options['job-type'] === 'job' && file_exists( $job_filepath_and_name ) ) {
+				$result = new \App\BatchJobs\Job( include $job_filepath_and_name );
+			}
+		}
+
+		return $result;
+	}
 
 	protected function init() {
 		$this->control_job_filename = 'control-job';
@@ -219,6 +314,32 @@ class JobHandler {
 		$this->job_succeeded_path = 'succeeded';
 		$this->job_to_process_path = 'to-process';
 		$this->storage_path = '';
+
+		$this->allowed_state_paths = array(
+			'job_failed_path',
+			'job_output_path',
+			'job_processing_path',
+			'job_succeeded_path',
+			'job_to_process_path'
+		);
+	}
+
+	/**
+	 * retrieves the first job group that has no more to_process or processing jobs
+	 *
+	 * @return {null|\App\BatchJobs\JobControl}
+	 */
+	public function getCompletedJobGroup() {
+		$result = null;
+
+		$result = $this->findJob(
+			array(
+				'job-state-paths' => array( 'job_to_process_path', 'job_processing_path' ),
+				'job-type' => 'control-job'
+			)
+		);
+
+		return $result;
 	}
 
 	public function getJobGroupId() {
@@ -252,13 +373,13 @@ class JobHandler {
 	 */
 	protected function getJobAsXml( Job $Job ) {
 		$properties = get_object_vars( $Job );
-		$result = '<batch_job>' . PHP_EOL;
+		$result = '<batch_job_metadata>' . PHP_EOL;
 
 		foreach( $properties as $key => $value ) {
 			$result .= chr(9) . '<' . $key . '>' . htmlspecialchars( $value ) . '</' . $key . '>' . PHP_EOL;
 		}
 
-		$result .= '</batch_job>';
+		$result .= '</batch_job_metadata>';
 		return $result;
 	}
 
@@ -278,37 +399,19 @@ class JobHandler {
 	}
 
 	/**
-	 * retrieves the first job to be processed from $this->job_path
+	 * retrieves the first job to be processed.
 	 *
 	 * @return {null|\App\BatchJobs\Job}
 	 */
 	public function getJobFromQueue() {
 		$result = null;
-		$filepath_and_name = '';
-		$job_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_path );
 
-		// find a job directory
-		foreach ( $job_directory as $job_directory_fileinfo ) {
-			if ( !$job_directory_fileinfo->isDot() ) {
-				if ( $job_directory_fileinfo->isDir() ) {
-					$job_group_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_path  . '/' . $job_directory_fileinfo->getFilename() . '/' . $this->job_to_process_path );
-
-					// search the job directory for a job in the $this->job_to_process_path
-					foreach ( $job_group_directory as $job_group_directory_fileinfo ) {
-						if ( !$job_group_directory_fileinfo->isDot() && !$job_group_directory_fileinfo->isDir() ) {
-							$filepath_and_name = $this->storage_path . '/' . $this->job_path  . '/' . $job_directory_fileinfo->getFilename() . '/' . $this->job_to_process_path . '/' . $job_group_directory_fileinfo->getFilename();
-							break;
-						}
-					}
-
-					// found a job, so stop searching
-					if ( !empty( $filepath_and_name ) && file_exists( $filepath_and_name ) ) {
-						$result = new \App\BatchJobs\Job( include $filepath_and_name );
-						break;
-					}
-				}
-			}
-		}
+		$result = $this->findJob(
+			array(
+				'job-state-paths' => array( 'job_to_process_path' ),
+				'job-type' => 'job'
+			)
+		);
 
 		return $result;
 	}
@@ -459,7 +562,7 @@ class JobHandler {
 	 * @param {\App\BatchJobs\Job} $Job
 	 * @return {string}
 	 */
-	protected function openXMLFile( Job $Job ) {
+	protected function openXmlFile( Job $Job ) {
 		switch ( $Job->schema ) {
 			case 'edm':
 				return
@@ -682,7 +785,7 @@ class JobHandler {
 		$xml_snippet = $xml_snippet . PHP_EOL;
 
 		if ( !file_exists( $this->getJobOutputPath( $Job ) . '/' . $Job->output_filename ) ) {
-			$xml_snippet = $this->openXMLFile( $Job ) . $xml_snippet;
+			$xml_snippet = $this->openXmlFile( $Job ) . $xml_snippet;
 
 			return $this->FileAdapter->create(
 				array(
