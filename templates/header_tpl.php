@@ -17,7 +17,7 @@
 		)
 	);
 
-	$Nav = new W3c\Html\Helpers\Nav( $menu_items );
+	$Nav = new W3C\Html\Helpers\Nav( $menu_items );
 ?>
 <div id="header">
 	<a class="logo" href="/" title="<?php echo $config['site-name']; ?>"></a>
