@@ -1,17 +1,6 @@
 <?php
 
 	/**
-	 * set-up page
-	 */
-	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
-
-	$WebPage->page = 'download/';
-	$WebPage->title = 'Download: ' . $config['site-name'];
-	$WebPage->heading = 'Download: ' . $config['site-name'];
-	$WebPage->view = 'html-layout_tpl.php';
-
-
-	/**
 	 * set-up variables
 	 */
 	$BatchJobHandler = new App\BatchJobs\JobHandler(
@@ -43,17 +32,40 @@
 				break;
 			}
 
+			$output_path_and_filename = $BatchJobHandler->storage_path . '/' . $BatchJobHandler->job_completed_output_path . '/' . $job_group_id . '.xml';
+
+			if ( !file_exists( $output_path_and_filename ) ) {
+				header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
+				$WebPage->page = 'download/';
+				$WebPage->title = 'Download: ' . $config['site-name'];
+				$WebPage->heading = 'Download: ' . $config['site-name'];
+				$WebPage->view = 'html-layout_tpl.php';
+				$html = '<h2 class="page-header">download batch job</h2><p>the batch job group <code>' . $job_group_id . '</code> does not exist.</p>';
+				$WebPage->html = $html;
+				include $WebPage->view;
+				break;
+			}
+
+			header( 'Content-Type: application/xml' );
+			header( 'Content-Transfer-Encoding: Binary' );
+			header( 'Content-disposition: attachment; filename="' . basename( $output_path_and_filename ) . '"' );
+			header('Expires: 0');
+			header('Cache-Control: must-revalidate');
+			header('Pragma: public');
+			header('Content-Length: ' . filesize( $output_path_and_filename ) );
+			readfile( $output_path_and_filename );
+
 		} while ( false );
 
 	} catch( Exception $e ) {
 
-		$html .= '<p class="error">' . $e->getMessage() . '</p>';
+		header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
+		$WebPage->page = 'download/';
+		$WebPage->title = 'Download: ' . $config['site-name'];
+		$WebPage->heading = 'Download: ' . $config['site-name'];
+		$WebPage->view = 'html-layout_tpl.php';
+		$html = '<p class="error">' . $e->getMessage() . '</p>';
+		$WebPage->html = $html;
+		include $WebPage->view;
 
 	}
-
-
-	/**
-	 * set-up page view
-	 */
-	$WebPage->html = $html;
-	include $WebPage->view;
