@@ -55,7 +55,7 @@
 				unset( $Job, $result );
 				$count += 1;
 
-			} while ( $count < $config['job_run_limit'] );
+			} while ( $count < $config['process_jobs_limit'] );
 
 		} while ( false );
 

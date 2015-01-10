@@ -45,7 +45,7 @@
 				unset( $JobControl );
 				$count += 1;
 
-			} while ( $count < $config['job_run_limit'] );
+			} while ( $count < $config['process_completed_job_groups_limit'] );
 
 		} while ( false );
 
