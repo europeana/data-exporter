@@ -1,5 +1,7 @@
 <?php
 
+	use App\BatchJobs\JobHandler as JobHandler;
+
 	/**
 	 * set-up page
 	 */
@@ -171,7 +173,7 @@
 
 				$BatchJob = new App\BatchJobs\Job( array(), true );
 
-				$BatchJobHandler = new App\BatchJobs\JobHandler(
+				$BatchJobHandler = new JobHandler(
 					array(
 						'FileAdapter' => \Php\File::getInstance(),
 						'storage_path' => APPLICATION_PATH
@@ -215,7 +217,8 @@
 						'params' => 'tag=' . $tag . '&europeanaid=' . $europeanaid,
 						'schema' => $schema,
 						'timestamp' => time(),
-						'total_records_found' => $TagResponse->totalResults
+						'total_records_found' => $TagResponse->totalResults,
+						'username' => $TagResponse->username
 					)
 				);
 

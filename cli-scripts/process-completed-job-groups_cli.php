@@ -27,16 +27,20 @@
 				$JobControl = $BatchJobHandler->getCompletedJobGroup();
 
 				if ( !( $JobControl instanceof ControlJob ) ) {
-					echo 'breaking';
 					break;
 				}
 
-				echo 'continuing';
-				// should we check processing file dates and move them back into to_process?
-				// if no files in to_process or processing:
-				//   * close output file
-				//   * cp output file to cli-output
-				//   * move job group to cli-archive
+				// close output file
+				$BatchJobHandler->closeXmlFile( $JobControl );
+
+				// copy output file to cli-output
+				$BatchJobHandler->copyOutputFile( $JobControl );
+
+				// move the job group to cli-archive
+				$BatchJobHandler->moveJobGroup( $JobControl );
+
+				// @todo create a job where at least one job gets stuck in processing
+				// how to deal with that scenario?
 
 				unset( $JobControl );
 				$count += 1;

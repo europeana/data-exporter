@@ -3,18 +3,7 @@ namespace App\BatchJobs;
 use Php\Exception;
 
 
-class Job {
-
-	/**
-	 * @var {string}
-	 */
-	public $endpoint;
-
-	/**
-	 * @var {string}
-	 * the job_group_id this job belongs to
-	 */
-	public $job_group_id;
+class Job extends JobAbstract {
 
 	/**
 	 * @var {int}
@@ -24,166 +13,44 @@ class Job {
 	/**
 	 * @var {string}
 	 */
-	public $output_filename;
-
-	/**
-	 * @var {string}
-	 */
-	public $params;
-
-	/**
-	 * @var {string}
-	 */
 	public $record_id;
 
-	/**
-	 * @var {string}
-	 * ese or edm
-	 */
-	public $schema;
-
-	/**
-	 * @var {int}
-	 */
-	public $start;
-
-	/**
-	 * @var {int}
-	 */
-	public $timestamp;
-
-	/**
-	 * @var {int}
-	 */
-	public $total_records_found;
-
-	/**
-	 * @var {string}
-	 */
-	public $username;
-
-
-	/**
-	 * @param {array} $options
-	 * @param {bool} $lazy_populate
-	 */
-	public function __construct( array $options = array(), $lazy_populate = false ) {
-		$this->init();
-
-		if ( $lazy_populate ) {
-			return;
-		}
-
-		$this->populate( $options );
-	}
 
 	protected function init() {
-		$this->endpoint = '';
-		$this->job_group_id = '';
+		parent::init();
 		$this->job_id = 0;
-		$this->output_filename = '';
-		$this->params = '';
 		$this->record_id = '';
-		$this->schema = '';
-		$this->start = 0;
-		$this->timestamp = 0;
-		$this->total_records_found = 0;
-		$this->username = '';
 	}
 
 	/**
 	 * @param {array} $options
 	 */
 	public function populate( array $options = array() ) {
-		if ( isset( $options['endpoint'] ) && is_string( $options['endpoint'] ) ) {
-			$this->endpoint = filter_var( $options['endpoint'], FILTER_SANITIZE_STRING );
-		}
-
-		if ( isset( $options['job_group_id'] ) && is_string( $options['job_group_id'] ) ) {
-			$this->job_group_id = filter_var( $options['job_group_id'], FILTER_SANITIZE_STRING );
-		}
+		parent::populate( $options );
 
 		if ( isset( $options['job_id'] ) && is_int( $options['job_id'] ) ) {
 			$this->job_id = (int) $options['job_id'];
-		}
-
-		if ( isset( $options['output_filename'] ) && is_string( $options['output_filename'] ) ) {
-			$this->output_filename = filter_var( $options['output_filename'], FILTER_SANITIZE_STRING );
-		}
-
-		if ( isset( $options['params'] ) && is_string( $options['params'] ) ) {
-			$this->params = filter_var( $options['params'], FILTER_SANITIZE_STRING );
 		}
 
 		if ( isset( $options['record_id'] ) && is_string( $options['record_id'] ) ) {
 			$this->record_id = filter_var( $options['record_id'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['schema'] ) && is_string( $options['schema'] ) ) {
-			$this->schema = filter_var( $options['schema'], FILTER_SANITIZE_STRING );
-		}
-
-		if ( isset( $options['start'] ) && is_int( $options['start'] ) ) {
-			$this->start = (int) $options['start'];
-		}
-
-		if ( isset( $options['timestamp'] ) && is_int( $options['timestamp'] ) ) {
-			$this->timestamp = (int) $options['timestamp'];
-		}
-
-		if ( isset( $options['total_records_found'] ) && is_int( $options['total_records_found'] ) ) {
-			$this->total_records_found = (int) $options['total_records_found'];
-		}
-
-		if ( isset( $options['username'] ) && is_string( $options['username'] ) ) {
-			$this->username = filter_var( $options['username'], FILTER_SANITIZE_STRING );
-		}
-
 		$this->validate();
-	}
-
-	public function reset() {
-		$this->init();
 	}
 
 	/**
 	 * @throws {Exception}
 	 */
 	public function validate() {
-		if ( empty( $this->endpoint ) || !is_string( $this->endpoint ) ) {
-			throw new Exception( __METHOD__ . '() no endpoint provided', 2 );
-		}
+		parent::validate();
 
-		if ( empty( $this->job_group_id ) || !is_string( $this->job_group_id ) ) {
-			throw new Exception( __METHOD__ . '() no job_group_id provided', 2 );
-		}
-
-		if ( empty( $this->output_filename ) || !is_string( $this->output_filename ) ) {
-			throw new Exception( __METHOD__ . '() no output_filename provided', 2 );
-		}
-
-		if ( empty( $this->params ) || !is_string( $this->params ) ) {
-			throw new Exception( __METHOD__ . '() no params provided', 2 );
+		if ( !is_int( $this->job_id ) ) {
+			throw new Exception( __METHOD__ . '() no job_id provided', 2 );
 		}
 
 		if ( empty( $this->record_id ) || !is_string( $this->record_id ) ) {
 			throw new Exception( __METHOD__ . '() no record_id provided', 2 );
-		}
-
-		if ( empty( $this->schema ) || !is_string( $this->schema ) ) {
-			throw new Exception( __METHOD__ . '() no schema provided', 2 );
-		}
-
-		if ( !is_int( $this->start ) ) {
-			throw new Exception( __METHOD__ . '() no start provided', 2 );
-		}
-
-		if ( empty( $this->timestamp ) || !is_int( $this->timestamp ) ) {
-			throw new Exception( __METHOD__ . '() no timestamp provided', 2 );
-		}
-
-		if ( empty( $this->total_records_found ) || !is_int( $this->total_records_found ) ) {
-			throw new Exception( __METHOD__ . '() no total_records_found provided', 2 );
 		}
 	}
 

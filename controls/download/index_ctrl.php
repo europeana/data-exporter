@@ -5,9 +5,9 @@
 	 */
 	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
 
-	$WebPage->page = 'queue/';
-	$WebPage->title = 'Queue: ' . $config['site-name'];
-	$WebPage->heading = 'Queue: ' . $config['site-name'];
+	$WebPage->page = 'download/';
+	$WebPage->title = 'Download: ' . $config['site-name'];
+	$WebPage->heading = 'Download: ' . $config['site-name'];
 	$WebPage->view = 'html-layout_tpl.php';
 
 
@@ -43,13 +43,7 @@
 				break;
 			}
 
-			$html = $BatchJobHandler->getJobGroupHtml( $job_group_id );
-
 		} while ( false );
-
-		if ( empty( $html ) ) {
-			$html = $BatchJobHandler->getJobsAsHtmlTable();
-		}
 
 	} catch( Exception $e ) {
 
