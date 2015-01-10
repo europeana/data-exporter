@@ -27,7 +27,7 @@
 /**
  * web page
  */
-	$WebPage = new W3c\Html\Document();
+	$WebPage = new W3C\Html\Document();
 
 
 /**
