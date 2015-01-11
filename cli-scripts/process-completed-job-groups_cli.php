@@ -33,11 +33,8 @@
 				// close output file
 				$BatchJobHandler->closeXmlFile( $JobControl );
 
-				// copy output file to cli-output
-				$BatchJobHandler->copyOutputFile( $JobControl );
-
-				// move the job group to cli-archive
-				$BatchJobHandler->moveJobGroup( $JobControl );
+				// move the job group to cli-jobs-completed
+				$BatchJobHandler->moveJobGroup( 'job_completed_path', $JobControl );
 
 				// @todo create a job where at least one job gets stuck in processing
 				// how to deal with that scenario?
@@ -45,7 +42,7 @@
 				unset( $JobControl );
 				$count += 1;
 
-			} while ( $count < $config['process_completed_job_groups_limit'] );
+			} while ( $count < $config['process_completed_jobs_limit'] );
 
 		} while ( false );
 

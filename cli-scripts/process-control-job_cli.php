@@ -10,39 +10,14 @@
 		do {
 
 			// @todo implement this method
-			return;
-
-			//$BatchJob = new App\BatchJobs\Job();
+			// intended for regular search
 			//
-			//$BatchJobHandler = new App\BatchJobs\JobHandler(
-			//	array(
-			//		'FileAdapter' => \Php\File::getInstance(),
-			//		'storage_path' => APPLICATION_PATH
-			//	)
-			//);
-			//
-			//$count = 1;
-			//$job_group_id = $BatchJobHandler->getJobGroupId();
-			//$output_filename = $BatchJobHandler->getOutputFilename();
-			//
-			//foreach( $TagResponse->items as $item ) {
-			//	$BatchJob->populate(
-			//		array(
-			//			'endpoint' => $TagRequest->getEndpoint(),
-			//			'record_id' => $item->europeanaId,
-			//			'job_group_id' => $job_group_id,
-			//			'job_id' => $count,
-			//			'output_filename' => $output_filename,
-			//			'params' => 'tag=' . $tag . '&europeanaid=' . $europeanaid,
-			//			'schema' => $schema,
-			//			'timestamp' => time(),
-			//			'total_records_found' => $TagResponse->totalResults
-			//		)
-			//	);
-			//
-			//	$BatchJobHandler->createJob( $BatchJob );
-			//	$count += 1;
-			//}
+			// this method differs from process-jobs_cli.php:
+			// * it only creates a ceratin nr of jobs each run - process-jobs creates
+			//   all jobs as long as the process job limit is not reached. this is the
+			//   case because the taglist call does not allow for iteration and only
+			//   returns the entire list no matter how large
+			// * it relies on the control job to store its place in the iteration
 
 		} while ( false );
 

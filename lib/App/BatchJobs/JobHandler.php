@@ -27,7 +27,7 @@ class JobHandler {
 	/**
 	 * @var {string}
 	 */
-	public $job_completed_output_path;
+	public $job_completed_path;
 
 	/**
 	 * @var {string}
@@ -142,44 +142,6 @@ class JobHandler {
 	 * @throws {Exception}
 	 * @return {bool}
 	 */
-	public function copyOutputFile( $ControlJob = null ) {
-		if ( !( $ControlJob instanceof ControlJob ) ) {
-			throw new Exception( __METHOD__ . '() ControlJob provided is not a valid ControlJob.' );
-		}
-
-		return $this->FileAdapter->copy(
-			array(
-				'source_path' => $this->getJobPath( 'job_output_path', $ControlJob ),
-				'source_filename' => $this->getOutputFilename( $ControlJob ),
-				'dest_path' => $this->storage_path . '/' . $this->job_completed_output_path,
-				'dest_filename' => $this->getOutputFilename( $ControlJob )
-			)
-		);
-	}
-
-	/**
-	 * @param {ControlJob} $ControlJob
-	 * @throws {Exception}
-	 * @return {bool}
-	 */
-	public function moveJobGroup( $ControlJob = null ) {
-		if ( !( $ControlJob instanceof ControlJob ) ) {
-			throw new Exception( __METHOD__ . '() ControlJob provided is not a valid ControlJob.' );
-		}
-
-		return $this->FileAdapter->move(
-			array(
-				'source_path' => $this->getJobPath( 'job_group_path', $ControlJob ),
-				'dest_path' => $this->storage_path . '/' . $this->job_archive_path . '/' . $this->getJobGroupId( $ControlJob )
-			)
-		);
-	}
-
-	/**
-	 * @param {ControlJob} $ControlJob
-	 * @throws {Exception}
-	 * @return {bool}
-	 */
 	public function createControlJob( $ControlJob = null ) {
 		if ( !( $ControlJob instanceof ControlJob ) ) {
 			throw new Exception( __METHOD__ . '() ControlJob provided is not a valid ControlJob.' );
@@ -234,74 +196,6 @@ echo $dir . '<br>';
 				'storage_path' => $this->getJobPath( 'job_to_process_path', $Job )
 			)
 		);
-	}
-
-	/**
-	 * @return {string}
-	 */
-	public function getJobsAsHtmlTable() {
-		$result = '<h2 class="page-header">batch jobs</h2><p>there are currently no jobs in the queue.</p>';
-		$jobs = array();
-		$job_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_path );
-		$count = 0;
-
-		foreach ( $job_directory as $job_group_fileinfo ) {
-			if ( !$job_group_fileinfo->isDot() ) {
-				if ( $job_group_fileinfo->isDir() ) {
-					$jobs[$count]['job_group'] = $job_group_fileinfo->getFilename();
-					$jobs[$count]['job_to_process'] = $this->countFiles( $job_group_fileinfo->getFilename() . '/' . $this->job_to_process_path );
-					$jobs[$count]['job_processing'] = $this->countFiles( $job_group_fileinfo->getFilename() . '/' . $this->job_processing_path );
-					$jobs[$count]['job_succeeded'] = $this->countFiles( $job_group_fileinfo->getFilename() . '/' . $this->job_succeeded_path );
-					$jobs[$count]['job_errors'] = $this->countFiles( $job_group_fileinfo->getFilename() . '/' . $this->job_failed_path );
-				}
-
-				$count += 1;
-			}
-		}
-
-		if ( empty( $jobs ) ) {
-			return $result;
-		}
-
-		$result = '<h2 class="page-header">batch job queue</h2><p>below is a status table listing all currently active batch jobs.</p>';
-		$result .= '<table class="table table-striped">';
-			$result .= '<thead>';
-				$result .= '<tr>';
-				$result .= '<th></th>';
-				$result .= '<th>job group</th>';
-				$result .= '<th>total</th>';
-				$result .= '<th>to process</th>';
-				$result .= '<th>succeeded</th>';
-				$result .= '<th>errors</th>';
-			$result .= '</tr>';
-			$result .= '</thead>';
-			$result .= '<tbody>';
-
-		$rows = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>';
-		$count = 0;
-
-		foreach( $jobs as $job ) {
-			// @todo implement delete
-			$delete = '<form action="/queue/delete" method="post"><button name="delete" value="' . $job['job_group']. '" class="btn icon-delete" title="delete"></button></form>';
-			$delete = '';
-
-			$result .= sprintf(
-				$rows,
-				$delete,
-				'<a href="/queue/?job-group-id=' . $job['job_group'] . '">' . $job['job_group'] . '</a>',
-				$job['job_to_process'] + $job['job_processing'] + $job['job_succeeded'] + $job['job_errors'],
-				$job['job_to_process'] + $job['job_processing'],
-				$job['job_succeeded'],
-				$job['job_errors']
-			);
-
-			$count += 1;
-		}
-
-		$result .= '</tbody>';
-		$result .= '</table>';
-
-		return $result;
 	}
 
 	/**
@@ -451,7 +345,7 @@ echo $dir . '<br>';
 		$this->control_job_filename = 'control-job';
 		$this->FileAdapter = null;
 		$this->job_archive_path = 'cli-job-archive';
-		$this->job_completed_output_path = 'cli-output';
+		$this->job_completed_path = 'cli-jobs-completed';
 		$this->job_group_id = '';
 		$this->job_failed_path = 'failed';
 		$this->job_filename_prefix = 'job-';
@@ -492,6 +386,25 @@ echo $dir . '<br>';
 	}
 
 	/**
+	 * @param {string} $job_group_id
+	 *
+	 * @return {null|JobControl}
+	 */
+	public function getControlJob( $job_group_id = '' ) {
+		$job_group_id = filter_var( $job_group_id, FILTER_SANITIZE_STRING );
+
+		$result = $this->findJobInState(
+			array(
+				'job-group' => $job_group_id,
+				'job-required' => false,
+				'job-state-path' => 'job_succeeded_path'
+			)
+		);
+
+		return $result['ControlJob'];
+	}
+
+	/**
 	 * @param {ControlJob|Job}
 	 * @return {string}
 	 */
@@ -514,15 +427,17 @@ echo $dir . '<br>';
 		$job_group_id = filter_var( $job_group_id, FILTER_SANITIZE_STRING ) ;
 
 		// search for completed output
-		$completed_output_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_completed_output_path );
+		$completed_output_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_completed_path );
 
 		foreach ( $completed_output_directory as $output_fileinfo ) {
 			if (
 				!$output_fileinfo->isDot() &&
-				!$output_fileinfo->isDir() &&
-				$output_fileinfo->getFilename() === $job_group_id . '.xml'
+				$output_fileinfo->isDir() &&
+				$output_fileinfo->getFilename() === $job_group_id
 			) {
 				$result = '<h2 class="page-header">batch job ready</h2><p>the batch job completed. you can now <a href="/download/?job-group-id=' . urlencode( $job_group_id ) . '">download the output</a>.</p>';
+				//@todo need to sort out the counts for getJobGroupAsHtmlTable so that it can shift between job path
+				//$result .= $this->getJobGroupAsHtmlTable( $job_group_id, 'job_completed_path' );
 			}
 		}
 
@@ -543,13 +458,26 @@ echo $dir . '<br>';
 	}
 
 	/**
+	 * @todo try to integrate this method with getJobsAsHtmlTable
+	 *
 	 * @param {string} $job_group_id
+	 * @param {string} $path
+	 *
 	 * @return {string}
 	 */
-	protected function getJobGroupAsHtmlTable( $job_group_id = '' ) {
+	protected function getJobGroupAsHtmlTable( $job_group_id = '', $path = '' ) {
 		$result = '';
 		$job_info = array();
-		$job_group_path = $this->storage_path . '/' . $this->job_path . '/' . $job_group_id;
+
+		switch ( $path ) {
+			case 'job_completed_path':
+				$job_group_path = $this->storage_path . '/' . $this->job_completed_path . '/' . $job_group_id;
+				break;
+
+			default:
+				$job_group_path = $this->storage_path . '/' . $this->job_path . '/' . $job_group_id;
+				break;
+		}
 
 		if ( !realpath( $job_group_path ) ) {
 			return $result;
@@ -578,6 +506,8 @@ echo $dir . '<br>';
 				$result .= '<tr>';
 				$result .= '<th></th>';
 				$result .= '<th>job group</th>';
+				$result .= '<th>username</th>';
+				$result .= '<th>params</th>';
 				$result .= '<th>total</th>';
 				$result .= '<th>to process</th>';
 				$result .= '<th>succeeded</th>';
@@ -586,21 +516,98 @@ echo $dir . '<br>';
 			$result .= '</thead>';
 			$result .= '<tbody>';
 
-		$rows = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>';
+		$rows = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>';
 
 		//@todo implement delete
 		//$delete = '<form action="/queue/delete" method="post"><button name="delete" value="' . $job['job_group']. '" class="btn icon-delete" title="delete"></button></form>';
 		$delete = '';
+		$ControlJob = $this->getControlJob( $job_info['job_group'] );
 
 		$result .= sprintf(
 			$rows,
 			$delete,
 			$job_info['job_group'],
+			$ControlJob->username,
+			$ControlJob->params,
 			$job_info['job_to_process'] + $job_info['job_processing'] + $job_info['job_succeeded'] + $job_info['job_errors'],
 			$job_info['job_to_process'] + $job_info['job_processing'],
 			$job_info['job_succeeded'],
 			$job_info['job_errors']
 		);
+
+		$result .= '</tbody>';
+		$result .= '</table>';
+
+		return $result;
+	}
+
+	/**
+	 * @todo try to integrate this method with getJobGroupAsHtmlTable
+	 * @return {string}
+	 */
+	public function getJobsAsHtmlTable() {
+		$result = '<h2 class="page-header">batch jobs</h2><p>there are currently no jobs in the queue.</p>';
+		$jobs = array();
+		$job_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_path );
+		$count = 0;
+
+		foreach ( $job_directory as $job_group_fileinfo ) {
+			if ( !$job_group_fileinfo->isDot() ) {
+				if ( $job_group_fileinfo->isDir() ) {
+					$jobs[$count]['job_group'] = $job_group_fileinfo->getFilename();
+					$jobs[$count]['job_to_process'] = $this->countFiles( $job_group_fileinfo->getFilename() . '/' . $this->job_to_process_path );
+					$jobs[$count]['job_processing'] = $this->countFiles( $job_group_fileinfo->getFilename() . '/' . $this->job_processing_path );
+					$jobs[$count]['job_succeeded'] = $this->countFiles( $job_group_fileinfo->getFilename() . '/' . $this->job_succeeded_path );
+					$jobs[$count]['job_errors'] = $this->countFiles( $job_group_fileinfo->getFilename() . '/' . $this->job_failed_path );
+				}
+
+				$count += 1;
+			}
+		}
+
+		if ( empty( $jobs ) ) {
+			return $result;
+		}
+
+		$result = '<h2 class="page-header">batch job queue</h2><p>below is a status table listing all currently active batch jobs.</p>';
+		$result .= '<table class="table table-striped">';
+			$result .= '<thead>';
+				$result .= '<tr>';
+				$result .= '<th></th>';
+				$result .= '<th>job group</th>';
+				$result .= '<th>username</th>';
+				$result .= '<th>params</th>';
+				$result .= '<th>total</th>';
+				$result .= '<th>to process</th>';
+				$result .= '<th>succeeded</th>';
+				$result .= '<th>errors</th>';
+			$result .= '</tr>';
+			$result .= '</thead>';
+			$result .= '<tbody>';
+
+		$rows = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>';
+		$count = 0;
+
+		foreach( $jobs as $job ) {
+			// @todo implement delete
+			//$delete = '<form action="/queue/delete" method="post"><button name="delete" value="' . $job['job_group']. '" class="btn icon-delete" title="delete"></button></form>';
+			$delete = '';
+			$ControlJob = $this->getControlJob( $job['job_group'] );
+
+			$result .= sprintf(
+				$rows,
+				$delete,
+				'<a href="/queue/?job-group-id=' . $job['job_group'] . '">' . $job['job_group'] . '</a>',
+				$ControlJob->username,
+				$ControlJob->params,
+				$job['job_to_process'] + $job['job_processing'] + $job['job_succeeded'] + $job['job_errors'],
+				$job['job_to_process'] + $job['job_processing'],
+				$job['job_succeeded'],
+				$job['job_errors']
+			);
+
+			$count += 1;
+		}
 
 		$result .= '</tbody>';
 		$result .= '</table>';
@@ -693,6 +700,10 @@ echo $dir . '<br>';
 		$storage_group_path = $this->storage_path . '/' . $this->job_path . '/' . $job_group_id;
 
 		switch( $type ) {
+			case 'job_completed_path':
+				$result = $this->storage_path . '/' . $this->job_completed_path . '/' . $job_group_id;
+				break;
+
 			case 'job_group_path':
 				$result = $storage_group_path;
 				break;
@@ -734,7 +745,9 @@ echo $dir . '<br>';
 	/**
 	 * @param {string} $dest
 	 * @param {Job} $Job
+	 *
 	 * @throws {Exception}
+	 *
 	 * @return {bool}
 	 */
 	public function moveJob( $dest = '', $Job = null ) {
@@ -761,12 +774,51 @@ echo $dir . '<br>';
 				break;
 		}
 
+		if ( empty( $dest_path ) ) {
+			throw new Exception( __METHOD__ . '() destination [' . $dest . '] is not yet handled' );
+		}
+
 		return $this->FileAdapter->move(
 			array(
 				'source_path' => $source_path,
 				'source_filename' => $this->getJobFilename( $Job ),
 				'dest_path' => $dest_path,
 				'dest_filename' => $this->getJobFilename( $Job ),
+			)
+		);
+	}
+
+	/**
+	 * @param {string} $dest
+	 * @param {ControlJob} $ControlJob
+	 *
+	 * @throws {Exception}
+	 *
+	 * @return {bool}
+	 */
+	public function moveJobGroup( $dest = '', $ControlJob = null ) {
+		if ( !( $ControlJob instanceof ControlJob ) ) {
+			throw new Exception( __METHOD__ . '() ControlJob provided is not a valid ControlJob.' );
+		}
+
+		$dest = filter_var( $dest, FILTER_SANITIZE_STRING );
+		$dest_path = '';
+
+		switch( $dest ) {
+			case 'job_completed_path':
+				$source_path = $this->getJobPath( 'job_group_path', $ControlJob );
+				$dest_path = $this->getJobPath( $dest, $ControlJob );
+				break;
+		}
+
+		if ( empty( $dest_path ) ) {
+			throw new Exception( __METHOD__ . '() destination [' . $dest . '] is not yet handled' );
+		}
+
+		return $this->FileAdapter->move(
+			array(
+				'source_path' => $source_path,
+				'dest_path' => $dest_path
 			)
 		);
 	}
@@ -815,8 +867,8 @@ echo $dir . '<br>';
 			$this->job_archive_path = filter_var( $options['job_archive_path'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['job_completed_output_path'] ) && is_string( $options['job_completed_output_path'] ) ) {
-			$this->job_completed_output_path = filter_var( $options['job_completed_output_path'], FILTER_SANITIZE_STRING );
+		if ( isset( $options['job_completed_path'] ) && is_string( $options['job_completed_path'] ) ) {
+			$this->job_completed_path = filter_var( $options['job_completed_path'], FILTER_SANITIZE_STRING );
 		}
 
 		if ( isset( $options['job_failed_path'] ) && is_string( $options['job_failed_path'] ) ) {
@@ -981,8 +1033,8 @@ echo $dir . '<br>';
 			throw new Exception( __METHOD__ . '() job_archive_path not provided', 2 );
 		}
 
-		if ( empty( $this->job_completed_output_path ) || !is_string( $this->job_completed_output_path ) ) {
-			throw new Exception( __METHOD__ . '() job_completed_output_path not provided', 2 );
+		if ( empty( $this->job_completed_path ) || !is_string( $this->job_completed_path ) ) {
+			throw new Exception( __METHOD__ . '() job_completed_path not provided', 2 );
 		}
 
 		if ( empty( $this->job_failed_path ) || !is_string( $this->job_failed_path ) ) {

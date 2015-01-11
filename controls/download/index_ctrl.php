@@ -32,7 +32,7 @@
 				break;
 			}
 
-			$output_path_and_filename = $BatchJobHandler->storage_path . '/' . $BatchJobHandler->job_completed_output_path . '/' . $job_group_id . '.xml';
+			$output_path_and_filename = $BatchJobHandler->storage_path . '/' . $BatchJobHandler->job_completed_path . '/' . $job_group_id . '/' . $BatchJobHandler->job_output_path . '/' . $job_group_id . '.xml';
 
 			if ( !file_exists( $output_path_and_filename ) ) {
 				header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
@@ -40,7 +40,7 @@
 				$WebPage->title = 'Download: ' . $config['site-name'];
 				$WebPage->heading = 'Download: ' . $config['site-name'];
 				$WebPage->view = 'html-layout_tpl.php';
-				$html = '<h2 class="page-header">download batch job</h2><p>the batch job group <code>' . $job_group_id . '</code> does not exist.</p>';
+				$html = '<h2 class="page-header">download batch job</h2><p>the batch job group <code>' . $job_group_id . '</code> has not yet completed, so there is not yet an output file ready to download. try checking its <a href="/queue/?job-group-id=' . $job_group_id . '">status page</a>.</p>';
 				$WebPage->html = $html;
 				include $WebPage->view;
 				break;

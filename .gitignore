@@ -1,5 +1,5 @@
 .htaccess
 config.ini
-cli-job-archive/**/*
+cli-jobs-completed/**/*
 cli-jobs/**/*
 cli-output/*.xml
