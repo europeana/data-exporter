@@ -36,11 +36,11 @@
 
 			if ( !file_exists( $output_path_and_filename ) ) {
 				header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
-				$WebPage->page = 'download/';
-				$WebPage->title = 'Download: ' . $config['site-name'];
-				$WebPage->heading = 'Download: ' . $config['site-name'];
+				$WebPage->page = 'downloads/';
+				$WebPage->title = 'Downloads: ' . $config['site-name'];
+				$WebPage->heading = 'Downloads: ' . $config['site-name'];
 				$WebPage->view = 'html-layout_tpl.php';
-				$html = '<h2 class="page-header">download batch job</h2><p>the batch job group <code>' . $job_group_id . '</code> has not yet completed, so there is not yet an output file ready to download. try checking its <a href="/queue/?job-group-id=' . $job_group_id . '">status page</a>.</p>';
+				$html = '<h2 class="page-header">download batch job</h2><p>the batch job group, <code>' . $job_group_id . '</code>, has not yet completed processing so there’s no output file to download. you can also follow its <a href="/queue/?job-group-id=' . $job_group_id . '">status page</a> for the latest information.</p>';
 				$WebPage->html = $html;
 				include $WebPage->view;
 				break;
@@ -60,9 +60,9 @@
 	} catch( Exception $e ) {
 
 		header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
-		$WebPage->page = 'download/';
-		$WebPage->title = 'Download: ' . $config['site-name'];
-		$WebPage->heading = 'Download: ' . $config['site-name'];
+		$WebPage->page = 'downloads/';
+		$WebPage->title = 'Downloads: ' . $config['site-name'];
+		$WebPage->heading = 'Downloads: ' . $config['site-name'];
 		$WebPage->view = 'html-layout_tpl.php';
 		$html = '<p class="error">' . $e->getMessage() . '</p>';
 		$WebPage->html = $html;

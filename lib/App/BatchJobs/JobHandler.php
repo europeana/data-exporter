@@ -470,7 +470,7 @@ class JobHandler {
 				$output_fileinfo->isDir() &&
 				$output_fileinfo->getFilename() === $job_group_id
 			) {
-				$result = '<h2 class="page-header">batch job ready</h2><p>the batch job completed. you can now <a href="/download/?job-group-id=' . urlencode( $job_group_id ) . '">download the output</a>.</p>';
+				$result = '<h2 class="page-header">batch job ready</h2><p>the batch job completed. you can now <a href="/downloads/?job-group-id=' . urlencode( $job_group_id ) . '">download the output</a>.</p>';
 				$result .= $this->getJobGroupAsHtmlTable( $job_group_id, 'job_completed_path' );
 			}
 		}
@@ -480,7 +480,7 @@ class JobHandler {
 			$result = $this->getJobGroupAsHtmlTable( $job_group_id );
 
 			if ( !empty( $result ) ) {
-				$result = '<h2 class="page-header">batch job status</h2><p>note this <a href="/queue/?job-group-id=' . urlencode( $job_group_id ) . '">page url</a> in order to keep track of the job status. when the batch job completes, a link to the download page will appear here in place of this sentence.</p>' . $result;
+				$result = '<h2 class="page-header">batch job status</h2><p>note this <a href="/queue/?job-group-id=' . urlencode( $job_group_id ) . '">page url</a> in order to keep track of the job status. when the batch job completes, a link to the download page will appear here.</p>' . $result;
 			}
 		}
 
