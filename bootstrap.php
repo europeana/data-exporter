@@ -32,6 +32,7 @@
  * include paths
  */
 	set_include_path(
+		'config' . PATH_SEPARATOR .
 		'controls' . PATH_SEPARATOR .
 		'forms' . PATH_SEPARATOR .
 		'lib' . PATH_SEPARATOR .
