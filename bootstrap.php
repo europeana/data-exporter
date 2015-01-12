@@ -52,13 +52,14 @@
 
 /**
  * config
+ * @todo convert this into a class
  */
-	if ( !file_exists( 'config.ini' ) ) {
-		echo 'we apologize, application configuration is not available at this time.';
+	$config = parse_ini_file( 'config.ini' );
+
+	if ( empty( $config ) ) {
+		echo 'we apologize, the application configuration is not available at this time.';
 		exit();
 	}
-
-	$config = parse_ini_file( 'config.ini' );
 
 
 
@@ -66,10 +67,8 @@
  * interface between web server and PHP
  */
 	if ( php_sapi_name() !== 'cli' ) {
-		if ( !file_exists( 'bootstrap-web.php' ) ) {
+		if ( !include 'bootstrap-web.php' ) {
 			echo 'we apologize, the web application could not start at this time.';
 			exit();
 		}
-
-		include 'bootstrap-web.php';
 	}
