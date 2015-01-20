@@ -3,4 +3,4 @@
 	url = git@github.com:dan-nl/Europeana.git
 [submodule "lib/Penn"]
 	path = lib/Penn
-	url = git@github.com:dan-nl/Penn.git
+	url = git@github.com:dan-nl/PennFramework.git
