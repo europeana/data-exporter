@@ -1,7 +1,7 @@
 <?php
 namespace App\BatchJobs;
-use Php\Exception;
 
+use Penn\Php\Exception;
 
 class ControlJob extends JobAbstract {
 

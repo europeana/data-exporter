@@ -1,30 +1,31 @@
 <?php
 
+	use \Europeana\Api\Helpers\Response as Response_Helper;
+	use \Europeana\Api\Helpers\Request as Request_Helper;
+	use \Penn\Html\Script;
+
 	/**
 	 * set-up page
 	 */
-	use \Europeana\Api\Helpers\Response as Response_Helper;
-	use \Europeana\Api\Helpers\Request as Request_Helper;
-	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
+	header( 'Content-Type: ' . $Config->content_type . '; charset=' . $Config->charset );
 
-	$WebPage->page = 'search/create-batch-job';
-	$WebPage->title = 'Create Batch Job - Search: ' . $config['site-name'];
-	$WebPage->heading = 'Create Batch Job - Search: ' . $config['site-name'];
-	$WebPage->view = 'html-layout_tpl.php';
+	$WebPage->page = 'search/results';
+	$WebPage->title = 'Results - Search: ' . $Config->site_name;
+	$WebPage->heading = 'Results - Search: ' . $Config->site_name;
+	$WebPage->view = 'html-layout.tpl.php';
 
 	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
-		$WebPage->addScript( new W3C\Html\Script( array( 'src' => '/js/prettify.js' ) ) );
+		$WebPage->addScript( new Script( array( 'src' => '/js/prettify.js' ) ) );
 	} else {
-		$WebPage->addScript( new W3C\Html\Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
+		$WebPage->addScript( new Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
 	}
 
-	$WebPage->addScript( new W3C\Html\Script( array( 'content' => 'prettyPrint();' ) ) );
+	$WebPage->addScript( new Script( array( 'content' => 'prettyPrint();' ) ) );
 
 
 	/**
 	 * set-up variables
 	 */
-	$create_batch_job = false;
 	$debug = false;
 	$empty_result = '<pre class="prettyprint">[{}]</pre>';
 	$form_feedback = '';
@@ -37,6 +38,7 @@
 	$search_result = '';
 	$start = 1;
 	$total_records_found = 0;
+	$username = '';
 	$wskey = '';
 
 
@@ -73,25 +75,16 @@
 
 
 			// get regular form params
-			if ( isset( $_POST['create-batch-job'] ) ) {
-				$create_batch_job = filter_var( $_POST['create-batch-job'], FILTER_SANITIZE_STRING );
-			}
-
-			if ( $create_batch_job !== 'true' )  {
-				$html_result .= '<pre class="prettyprint">{ success: false, message: "no batch job requested" }</pre>';
-				break;
-			}
-
 			if ( isset( $_POST['debug'] ) && $_POST['debug'] === 'true' ) {
 				$debug = true;
 			}
 
-			if ( isset( $_POST['total-records-found'] ) ) {
-				$total_records_found = (int) $_POST['total-records-found'];
-			}
-
 			if ( isset( $_POST['query'] ) ) {
 				$query = filter_var( $_POST['query'], FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['username'] ) ) {
+				$username = filter_var( $_POST['username'], FILTER_SANITIZE_STRING );
 			}
 
 			if ( empty( $query ) ) {
@@ -117,8 +110,8 @@
 
 
 			// set api key
-			if ( isset( $config['wskey'] ) ) {
-				$wskey = filter_var( $config['wskey'], FILTER_SANITIZE_STRING );
+			if ( isset( $Config->europeana_api->wskey ) ) {
+				$wskey = filter_var( $Config->europeana_api->wskey, FILTER_SANITIZE_STRING );
 			}
 
 			// set search options
@@ -152,40 +145,27 @@
 
 
 			// process the response
-			// exceeded job max
-			if ( $SearchResponse->totalResults > $config['job_max'] ) {
+			if ( $SearchResponse->totalResults > $Config->jobs->job_max ) {
 
-				$html_result = '<pre class="prettyprint">{ success: false, message: "total results exceeded the maximum number of items per job" }</pre>';
+				$html_result .=
+					sprintf(
+						'<h2 class="page-header">batch job</h2><p>the total result set of <b>%s</b> items exceeds the maximum job limit of <b>%s</b> items. you need to narrow down the result set in order to create a batch job.</p>',
+						number_format( $SearchResponse->totalResults ),
+						number_format( $Config->jobs->job_max )
+					);
 
-			// create the job control job
+				$html_result .= Response_Helper::getResponseImagesWithLinks( $SearchResponse );
+
 			} elseif ( $SearchResponse->totalResults > 0 ) {
 
-				$BatchJobHandler = new App\BatchJobs\JobHandler(
-					array(
-						'FileAdapter' => \Php\File::getInstance(),
-						'storage_path' => APPLICATION_PATH
-					)
-				);
+				// add batch job form
+				$html_result .= include 'search/create-batch-job.form.php';
+				$html_result .= Response_Helper::getResponseImagesWithLinks( $SearchResponse );
 
-				$ControlJob = new App\BatchJobs\ControlJob(
-					array(
-						'endpoint' => $SearchRequest->getEndpoint(),
-						'job_group_id' => $BatchJobHandler->getJobGroupId(),
-						'output_filename' => $BatchJobHandler->getOutputFilename(),
-						'params' => 'tag=' . $query_string,
-						'schema' => $schema,
-						'timestamp' => time(),
-						'total_records_found' => $SearchResponse->totalResults
-					)
-				);
-
-				$BatchJobHandler->createControlJob( $ControlJob );
-				header( 'Location: /queue/?job-group-id=' . urlencode( $ControlJob->job_group_id ) );
-
-			// no results
 			} else {
 
-				$html_result = '<pre class="prettyprint">{ success: false, message: "no results found" }</pre>';
+				$html_result .= '<h3>sample result set</h3>';
+				$html_result .= '<p>no search results found</p>';
 
 			}
 

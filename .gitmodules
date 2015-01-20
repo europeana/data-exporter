@@ -1,15 +1,6 @@
-[submodule "lib/W3C"]
-	path = lib/W3C
-	url = git@github.com:dan-nl/W3C.git
-[submodule "lib/Libcurl"]
-	path = lib/Libcurl
-	url = git@github.com:dan-nl/Libcurl.git
-[submodule "lib/Php"]
-	path = lib/Php
-	url = git@github.com:dan-nl/Php.git
-[submodule "lib/OWASP"]
-	path = lib/OWASP
-	url = git@github.com:dan-nl/OWASP.git
 [submodule "lib/Europeana"]
 	path = lib/Europeana
 	url = git@github.com:dan-nl/Europeana.git
+[submodule "lib/Penn"]
+	path = lib/Penn
+	url = git@github.com:dan-nl/Penn.git

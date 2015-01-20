@@ -3,12 +3,12 @@
 	/**
 	 * set-up page
 	 */
-	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
+	header( 'Content-Type: ' . $Config->content_type . '; charset=' . $Config->charset );
 
 	$WebPage->page = 'queue/';
-	$WebPage->title = 'Queue: ' . $config['site-name'];
-	$WebPage->heading = 'Queue: ' . $config['site-name'];
-	$WebPage->view = 'html-layout_tpl.php';
+	$WebPage->title = 'Queue: ' . $Config->site_name;
+	$WebPage->heading = 'Queue: ' . $Config->site_name;
+	$WebPage->view = 'html-layout.tpl.php';
 
 
 	/**

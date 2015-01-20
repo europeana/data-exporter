@@ -17,10 +17,10 @@
 		)
 	);
 
-	$Nav = new W3C\Html\Helpers\Nav( $menu_items );
+	$Nav = new Penn\Html\Helpers\Nav( $menu_items );
 ?>
 <div id="header">
-	<a class="logo" href="/" title="<?php echo $config['site-name']; ?>"></a>
+	<a class="logo" href="/" title="<?php echo $Config->site_name; ?>"></a>
 	<h1><?php echo $WebPage->heading; ?></h1>
 	<?php echo $Nav->getNavAsUl( 'nav', $WebPage->page ); ?>
 </div>

@@ -10,6 +10,7 @@
 		'<input type="hidden" name="' . $Csrf->getTokenKey() . '" value="' . $Csrf->getTokenValue() . '" />' .
 		'<input type="hidden" name="debug" value="' . ( $debug ? 'true' : 'false' ) . '" />' .
 		'<input type="hidden" name="query" value="' . $query . '" />' .
+		'<input type="hidden" name="username" value="' . $username . '" />' .
 		'<input type="hidden" name="total-records-found" value="' . $SearchResponse->totalResults . '" />' .
 		'<input type="submit" class="btn btn-default" value="create a batch job" />' .
 	'</form>';

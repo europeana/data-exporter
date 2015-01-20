@@ -42,7 +42,7 @@
 				unset( $JobControl );
 				$count += 1;
 
-			} while ( $count < $config['process_completed_jobs_limit'] );
+			} while ( $count < $Config->jobs->process_completed_jobs_limit );
 
 		} while ( false );
 

@@ -1,11 +1,12 @@
 <?php
 namespace App\BatchJobs;
-use \App\BatchJobs\ControlJob as ControlJob;
-use \App\BatchJobs\Job as Job;
-use Europeana\Api\Helpers\Response as Response_Helper;
-use Php\Exception;
-use Php\FileAdapterInterface;
 
+use App\BatchJobs\ControlJob as ControlJob;
+use App\BatchJobs\Job as Job;
+use Europeana\Api\Helpers\Response as Response_Helper;
+use Penn\Http\RequestInterface;
+use Penn\Php\Exception;
+use Penn\Php\FileAdapterInterface;
 
 class JobHandler {
 
@@ -558,15 +559,28 @@ class JobHandler {
 		//@todo implement delete
 		//$delete = '<form action="/queue/delete" method="post"><button name="delete" value="' . $job['job_group']. '" class="btn icon-delete" title="delete"></button></form>';
 		$delete = '';
+		$username = '';
+		$params = '';
+		$total = $job_info['job_to_process'] + $job_info['job_processing'] + $job_info['job_succeeded'] + $job_info['job_errors'];
 		$ControlJob = $this->getControlJob( $job_info['job_group'], $job_path );
+
+		if ( $ControlJob instanceof ControlJob ) {
+			$username = $ControlJob->username;
+			$params = $ControlJob->params;
+
+			// this happens when not all jobs were created with the control job; e.g., search.json
+			if ( $total < $ControlJob->total_records_found ) {
+				$total = $ControlJob->total_records_found;
+			}
+		}
 
 		$result .= sprintf(
 			$rows,
 			$delete,
 			$job_info['job_group'],
-			$ControlJob->username,
-			$ControlJob->params,
-			$job_info['job_to_process'] + $job_info['job_processing'] + $job_info['job_succeeded'] + $job_info['job_errors'],
+			$username,
+			$params,
+			$total,
 			$job_info['job_to_process'] + $job_info['job_processing'],
 			$job_info['job_succeeded'],
 			$job_info['job_errors']
@@ -607,7 +621,7 @@ class JobHandler {
 			return $result;
 		}
 
-		$result = '<h2 class="page-header">batch job queue</h2><p>below is a status table listing all currently active batch jobs.</p>';
+		$result = '<h2 class="page-header">batch job queue</h2><p>below is a status table listing all currently active batch jobs.</p><p>note that the total columns, to process, succeeded, and errors, for jobs run against search.json, may not add up to the nr in the total column until all batch jobs have been put into the queue. whereas, jobs runs against tag.json are put all at once into the queue and should always equal the total column.</p>';
 		$result .= '<table class="table table-striped">';
 			$result .= '<thead>';
 				$result .= '<tr>';
@@ -630,15 +644,28 @@ class JobHandler {
 			// @todo implement delete
 			//$delete = '<form action="/queue/delete" method="post"><button name="delete" value="' . $job['job_group']. '" class="btn icon-delete" title="delete"></button></form>';
 			$delete = '';
+			$username = '';
+			$params = '';
+			$total = $job['job_to_process'] + $job['job_processing'] + $job['job_succeeded'] + $job['job_errors'];
 			$ControlJob = $this->getControlJob( $job['job_group'] );
+
+			if ( $ControlJob instanceof ControlJob ) {
+				$username = $ControlJob->username;
+				$params = $ControlJob->params;
+
+				// this happens when not all jobs were created with the control job; e.g., search.json
+				if ( $total < $ControlJob->total_records_found ) {
+					$total = $ControlJob->total_records_found;
+				}
+			}
 
 			$result .= sprintf(
 				$rows,
 				$delete,
 				'<a href="/queue/?job-group-id=' . $job['job_group'] . '">' . $job['job_group'] . '</a>',
-				$ControlJob->username,
-				$ControlJob->params,
-				$job['job_to_process'] + $job['job_processing'] + $job['job_succeeded'] + $job['job_errors'],
+				$username,
+				$params,
+				$total,
 				$job['job_to_process'] + $job['job_processing'],
 				$job['job_succeeded'],
 				$job['job_errors']
@@ -993,7 +1020,7 @@ class JobHandler {
 				break;
 		}
 
-		if ( !( $RecordRequest instanceof \W3C\Http\RequestInterface ) ) {
+		if ( !( $RecordRequest instanceof RequestInterface ) ) {
 			throw new Exception( __METHOD__ . '() job schema, [' . filter_var( $Job->schema, FILTER_SANITIZE_STRING ) . '], is not yet handled by the application' );
 		}
 

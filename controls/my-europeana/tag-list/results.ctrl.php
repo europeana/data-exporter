@@ -1,22 +1,24 @@
 <?php
 
+	use \Penn\Html\Script;
+
 	/**
 	 * set-up page
 	 */
-	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
+	header( 'Content-Type: ' . $Config->content_type . '; charset=' . $Config->charset );
 
 	$WebPage->page = 'my-europeana/tag-list/results';
-	$WebPage->title = 'Results - Tag List, My Europeana: ' . $config['site-name'];
-	$WebPage->heading = 'Results - Tag List, My Europeana: ' . $config['site-name'];
-	$WebPage->view = 'html-layout_tpl.php';
+	$WebPage->title = 'Results - Tag List, My Europeana: ' . $Config->site_name;
+	$WebPage->heading = 'Results - Tag List, My Europeana: ' . $Config->site_name;
+	$WebPage->view = 'html-layout.tpl.php';
 
 	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
-		$WebPage->addScript( new W3C\Html\Script( array( 'src' => '/js/prettify.js' ) ) );
+		$WebPage->addScript( new Script( array( 'src' => '/js/prettify.js' ) ) );
 	} else {
-		$WebPage->addScript( new W3C\Html\Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
+		$WebPage->addScript( new Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
 	}
 
-	$WebPage->addScript( new W3C\Html\Script( array( 'content' => 'prettyPrint();' ) ) );
+	$WebPage->addScript( new Script( array( 'content' => 'prettyPrint();' ) ) );
 
 
 	/**
@@ -31,6 +33,7 @@
 	$j_password = '';
 	$login_request_options = array();
 	$login_result = '';
+	$start = 1;
 	$tag = '';
 	$tag_request_options = array();
 	$tag_result = '';
@@ -140,13 +143,13 @@
 
 
 			// process the response
-			if ( $TagResponse->totalResults > $config['job_max'] ) {
+			if ( $TagResponse->totalResults > $Config->jobs->job_max ) {
 
 				$html_result .=
 					sprintf(
 						'<h2 class="page-header">batch job</h2><p>the total result set of <b>%s</b> items exceeds the maximum job limit of <b>%s</b> items. you need to narrow down the result set in order to create a batch job.</p>',
 						number_format( $TagResponse->totalResults ),
-						number_format( $config['job_max'] )
+						number_format( $Config->jobs->job_max )
 					);
 
 					$html_result .= Europeana\Api\Helpers\Response::getResponseImagesWithLinks( $TagResponse );
@@ -154,7 +157,7 @@
 			} elseif ( $TagResponse->totalResults > 0 ) {
 
 				// add batch job form
-				$html_result .= include 'my-europeana/tag-list/create-batch-job_form.php';
+				$html_result .= include 'my-europeana/tag-list/create-batch-job.form.php';
 				$html_result .= Europeana\Api\Helpers\Response::getResponseImagesWithLinks( $TagResponse );
 
 			} else {

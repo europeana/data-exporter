@@ -53,11 +53,10 @@
 
 /**
  * config
- * @todo convert this into a class
  */
-	$config = parse_ini_file( 'config.ini' );
-
-	if ( empty( $config ) ) {
+	try {
+		$Config = new Penn\Config( include 'application.config.php' );
+	} catch ( Exception $e ) {
 		echo 'we apologize, the application configuration is not available at this time.';
 		exit();
 	}

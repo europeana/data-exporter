@@ -41,7 +41,7 @@
 				$result = $BatchJobHandler->processJob(
 					array(
 						'Job' => $Job,
-						'wskey' => $config['wskey']
+						'wskey' => $Config->europeana_api->wskey
 					)
 				);
 
@@ -55,7 +55,7 @@
 				unset( $Job, $result );
 				$count += 1;
 
-			} while ( $count < $config['process_jobs_limit'] );
+			} while ( $count < $Config->jobs->process_jobs_limit );
 
 		} while ( false );
 

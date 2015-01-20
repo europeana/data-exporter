@@ -5,20 +5,20 @@
 	/**
 	 * set-up page
 	 */
-	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
+	header( 'Content-Type: ' . $Config->content_type . '; charset=' . $Config->charset );
 
 	$WebPage->page = 'my-europeana/tag-list/create-batch-job';
-	$WebPage->title = 'Create Batch Job - Tag List, My Europeana: ' . $config['site-name'];
-	$WebPage->heading = 'Create Batch Job - Tag List, My Europeana: ' . $config['site-name'];
-	$WebPage->view = 'html-layout_tpl.php';
+	$WebPage->title = 'Create Batch Job - Tag List, My Europeana: ' . $Config->site_name;
+	$WebPage->heading = 'Create Batch Job - Tag List, My Europeana: ' . $Config->site_name;
+	$WebPage->view = 'html-layout.tpl.php';
 
 	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
-		$WebPage->addScript( new W3C\Html\Script( array( 'src' => '/js/prettify.js' ) ) );
+		$WebPage->addScript( new Penn\Html\Script( array( 'src' => '/js/prettify.js' ) ) );
 	} else {
-		$WebPage->addScript( new W3C\Html\Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
+		$WebPage->addScript( new Penn\Html\Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
 	}
 
-	$WebPage->addScript( new W3C\Html\Script( array( 'content' => 'prettyPrint();' ) ) );
+	$WebPage->addScript( new Penn\Html\Script( array( 'content' => 'prettyPrint();' ) ) );
 
 
 	/**
@@ -164,7 +164,7 @@
 
 			// process the response
 			// exceeded job max
-			if ( $TagResponse->totalResults > $config['job_max'] ) {
+			if ( $TagResponse->totalResults > $Config->jobs->job_max ) {
 
 				$html_result = '<pre class="prettyprint">{ success: false, message: "total results exceeded the maximum number of items per job" }</pre>';
 
@@ -196,7 +196,6 @@
 							'params' => 'tag=' . $tag . '&europeanaid=' . $europeanaid,
 							'record_id' => $item->europeanaId,
 							'schema' => $schema,
-							'start' => 0,
 							'timestamp' => time(),
 							'total_records_found' => $TagResponse->totalResults,
 							'username' => $TagResponse->username
@@ -207,15 +206,21 @@
 					$count += 1;
 				}
 
+				// because there is no start/limit for this api method, all jobs should be created during this run
+				if ( ( $count - 1 ) !== $TagResponse->totalResults ) {
+					throw new Exception( 'the number of batch jobs created does not match the total results.' );
+				}
+
 				$ControlJob = new App\BatchJobs\ControlJob(
 					array(
 						'all_jobs_created' => true,
 						'creating_jobs' => false,
 						'endpoint' => $TagRequest->getEndpoint(),
-						'job_group_id' => $BatchJobHandler->getJobGroupId(),
-						'output_filename' => $BatchJobHandler->getOutputFilename(),
+						'job_group_id' => $job_group_id,
+						'output_filename' => $output_filename,
 						'params' => 'tag=' . $tag . '&europeanaid=' . $europeanaid,
 						'schema' => $schema,
+						'start' => $count,
 						'timestamp' => time(),
 						'total_records_found' => $TagResponse->totalResults,
 						'username' => $TagResponse->username

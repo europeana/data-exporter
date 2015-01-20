@@ -3,12 +3,12 @@
 	/**
 	 * set-up page
 	 */
-	header( 'Content-Type: ' . $config['content-type'] . '; charset=' . $config['charset'] );
+	header( 'Content-Type: ' . $Config->content_type . '; charset=' . $Config->charset );
 
 	$WebPage->page = 'queue/delete';
-	$WebPage->title = 'Delete, Queue: ' . $config['site-name'];
-	$WebPage->heading = 'Delete, Queue: ' . $config['site-name'];
-	$WebPage->view = 'html-layout_tpl.php';
+	$WebPage->title = 'Delete, Queue: ' . $Config->site_name;
+	$WebPage->heading = 'Delete, Queue: ' . $Config->site_name;
+	$WebPage->view = 'html-layout.tpl.php';
 
 
 	/**
