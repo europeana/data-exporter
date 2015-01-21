@@ -3,10 +3,10 @@
 	/**
 	 * set-up page
 	 */
-	use \App\BatchJobs\JobHandler as JobHandler;
-	use \Europeana\Api\Helpers\Response as Response_Helper;
-	use \Europeana\Api\Helpers\Request as Request_Helper;
-	use \Penn\Html\Script;
+	use App\BatchJobs\JobHandler as JobHandler;
+	use Europeana\Api\Helpers\Response as Response_Helper;
+	use Europeana\Api\Helpers\Request as Request_Helper;
+	use Penn\Html\Script;
 
 	header( 'Content-Type: ' . $Config->content_type . '; charset=' . $Config->charset );
 
@@ -172,7 +172,7 @@
 
 				$BatchJobHandler = new JobHandler(
 					array(
-						'FileAdapter' => \Php\File::getInstance(),
+						'FileAdapter' => Penn\Php\File::getInstance(),
 						'storage_path' => APPLICATION_PATH
 					)
 				);

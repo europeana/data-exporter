@@ -3,7 +3,7 @@
 	chdir( dirname( __DIR__ ) );
 	include 'bootstrap.php';
 
-	use \App\BatchJobs\Job as Job;
+	use App\BatchJobs\Job as Job;
 	use App\BatchJobs\JobHandler as JobHandler;
 
 	$job = array();
@@ -14,7 +14,7 @@
 
 			$BatchJobHandler = new JobHandler(
 				array(
-					'FileAdapter' => \Php\File::getInstance(),
+					'FileAdapter' => Penn\Php\File::getInstance(),
 					'storage_path' => APPLICATION_PATH
 				)
 			);
