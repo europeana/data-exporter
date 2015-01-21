@@ -14,7 +14,7 @@
 	/**
 	 * set-up csrf
 	 */
-	$Csrf = new \OWASP\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
+	$Csrf = new Penn\Owasp\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
 
 
 	/**

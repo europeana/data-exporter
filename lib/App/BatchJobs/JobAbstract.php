@@ -119,31 +119,38 @@ abstract class JobAbstract {
 	 */
 	public function validate() {
 		if ( empty( $this->endpoint ) || !is_string( $this->endpoint ) ) {
-			throw new Exception( __METHOD__ . '() no endpoint provided', 2 );
+			error_log( __METHOD__ . '() no endpoint provided' );
+			throw new Exception( 'no endpoint provided', 2 );
 		}
 
 		if ( empty( $this->job_group_id ) || !is_string( $this->job_group_id ) ) {
-			throw new Exception( __METHOD__ . '() no job_group_id provided', 2 );
+			error_log( __METHOD__ . '() no job_group_id provided' );
+			throw new Exception( 'no job_group_id provided', 2 );
 		}
 
 		if ( empty( $this->output_filename ) || !is_string( $this->output_filename ) ) {
-			throw new Exception( __METHOD__ . '() no output_filename provided', 2 );
+			error_log( __METHOD__ . '() no output_filename provided' );
+			throw new Exception( 'no output_filename provided', 2 );
 		}
 
 		if ( empty( $this->params ) || !is_string( $this->params ) ) {
-			throw new Exception( __METHOD__ . '() no params provided', 2 );
+			error_log( __METHOD__ . '() no params provided' );
+			throw new Exception( 'no params provided', 2 );
 		}
 
 		if ( empty( $this->schema ) || !is_string( $this->schema ) ) {
-			throw new Exception( __METHOD__ . '() no schema provided', 2 );
+			error_log( __METHOD__ . '() no schema provided' );
+			throw new Exception( 'no schema provided', 2 );
 		}
 
 		if ( empty( $this->timestamp ) || !is_int( $this->timestamp ) ) {
-			throw new Exception( __METHOD__ . '() no timestamp provided', 2 );
+			error_log( __METHOD__ . '() no timestamp provided' );
+			throw new Exception( 'no timestamp provided', 2 );
 		}
 
 		if ( empty( $this->total_records_found ) || !is_int( $this->total_records_found ) ) {
-			throw new Exception( __METHOD__ . '() no total_records_found provided', 2 );
+			error_log( __METHOD__ . '() no total_records_found provided' );
+			throw new Exception( 'no total_records_found provided', 2 );
 		}
 	}
 

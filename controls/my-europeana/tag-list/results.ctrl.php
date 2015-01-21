@@ -42,7 +42,7 @@
 	/**
 	 * set-up csrf
 	 */
-	$Csrf = new \OWASP\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
+	$Csrf = new Penn\Owasp\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
 
 
 	/**
@@ -104,7 +104,7 @@
 
 
 			// setup curl
-			$Curl = new Libcurl\Curl( array( 'curl-followlocation' => true ) ); // because of 302 Moved Temporarily response from login.do
+			$Curl = new Penn\Php\Curl( array( 'curl-followlocation' => true ) ); // because of 302 Moved Temporarily response from login.do
 			$Curl->setHttpHeader( array( 'Accept: application/json' ) );
 
 

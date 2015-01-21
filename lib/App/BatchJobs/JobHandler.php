@@ -119,7 +119,8 @@ class JobHandler {
 	 */
 	public function closeXmlFile( $ControlJob = null ) {
 		if ( !( $ControlJob instanceof ControlJob ) ) {
-			throw new Exception( __METHOD__ . '() ControlJob provided is not a valid ControlJob.' );
+			error_log( __METHOD__ . '() ControlJob provided is not a valid ControlJob.' );
+			throw new Exception( 'ControlJob provided is not a valid ControlJob.', 1 );
 		}
 
 		switch ( $ControlJob->schema ) {
@@ -150,7 +151,8 @@ class JobHandler {
 	 */
 	public function createControlJob( $ControlJob = null ) {
 		if ( !( $ControlJob instanceof ControlJob ) ) {
-			throw new Exception( __METHOD__ . '() ControlJob provided is not a valid ControlJob.' );
+			error_log( __METHOD__ . '() ControlJob provided is not a valid ControlJob.' );
+			throw new Exception( 'ControlJob provided is not a valid ControlJob.', 1 );
 		}
 
 		$this->ensureDirectories();
@@ -173,12 +175,11 @@ class JobHandler {
 		$dir = $this->sanitizeFilenamePath( $dir );
 
 		if ( empty( $dir ) ) {
-			throw new Exception( __METHOD__ . '() no dir provided' );
+			error_log( __METHOD__ . '() no dir provided' );
+			throw new Exception( 'no dir provided', 25 );
 		}
 
-		if ( !mkdir( $dir, 0755 ) ) {
-			throw new Exception( __METHOD__ . '() could not create directory [' . $dir . ']' );
-		}
+		$this->FileAdapter->mkDir( $dir, 0755 );
 	}
 
 	/**
@@ -188,7 +189,8 @@ class JobHandler {
 	 */
 	public function createJob( $Job = null ) {
 		if ( !( $Job instanceof Job ) ) {
-			throw new Exception( __METHOD__ . '() Job provided is not a valid Job.' );
+			error_log( __METHOD__ . '() Job provided is not a valid Job.' );
+			throw new Exception( 'Job provided is not a valid Job.', 1 );
 		}
 
 		$Job->validate();
@@ -326,11 +328,13 @@ class JobHandler {
 		$options = array_merge( $default_options, $options );
 
 		if ( !isset( $options['job-group'] ) || !is_string( $options['job-group'] ) ) {
-			throw new Exception( __METHOD__ . '() job-group not provided.' );
+			error_log( __METHOD__ . '() job-group not provided.' );
+			throw new Exception( 'job-group not provided.', 25 );
 		}
 
 		if ( !in_array( $options['job-path'], $this->allowed_job_paths ) ) {
-			throw new Exception( __METHOD__ . '() job-path [' . filter_var( $options['job-path'], FILTER_SANITIZE_STRING ) . '] not yet handled by the application.' );
+			error_log( __METHOD__ . '() job-path [' . filter_var( $options['job-path'], FILTER_SANITIZE_STRING ) . '] not yet handled by the application' );
+			throw new Exception( 'job-path given not yet handled by the application', 26 );
 		}
 
 		// find the ControlJob
@@ -346,7 +350,8 @@ class JobHandler {
 
 		// find a Job in the state given
 		if ( !in_array( $options['job-state-path'], $this->allowed_state_paths ) ) {
-			throw new Exception( __METHOD__ . '() job-state-path [' . filter_var( $options['job-state-path'], FILTER_SANITIZE_STRING ) . '] not yet handled by the application.' );
+			error_log( __METHOD__ . '() job-state-path [' . filter_var( $options['job-state-path'], FILTER_SANITIZE_STRING ) . '] not yet handled by the application.' );
+			throw new Exception( 'job-state-path given not yet handled by the application', 26 );
 		}
 
 		$job_filepath_and_name = '';
@@ -695,7 +700,8 @@ class JobHandler {
 	 */
 	protected function getJobAsXml( $Job = null ) {
 		if ( !( $Job instanceof Job ) ) {
-			throw new Exception( __METHOD__ . '() Job provided is not a valid Job.' );
+			error_log( __METHOD__ . '() Job provided is not a valid Job' );
+			throw new Exception( 'Job provided is not a valid Job', 1 );
 		}
 
 		$properties = get_object_vars( $Job );
@@ -718,7 +724,8 @@ class JobHandler {
 	 */
 	protected function getJobFilename( $Job = null ) {
 		if ( !( $Job instanceof Job ) ) {
-			throw new Exception( __METHOD__ . '() Job provided is not a valid Job.' );
+			error_log( __METHOD__ . '() Job provided is not a valid Job' );
+			throw new Exception( 'Job provided is not a valid Job', 1 );
 		}
 
 		return $this->job_filename_prefix .
@@ -817,7 +824,8 @@ class JobHandler {
 	 */
 	public function moveJob( $dest = '', $Job = null ) {
 		if ( !( $Job instanceof Job ) ) {
-			throw new Exception( __METHOD__ . '() Job provided is not a valid Job' );
+			error_log( __METHOD__ . '() Job provided is not a valid Job' );
+			throw new Exception( 'Job provided is not a valid Job', 1 );
 		}
 
 		$dest_path = '';
@@ -840,7 +848,8 @@ class JobHandler {
 		}
 
 		if ( empty( $dest_path ) ) {
-			throw new Exception( __METHOD__ . '() destination [' . $dest . '] is not yet handled' );
+			error_log( __METHOD__ . '() destination [' . $dest . '] is not yet handled by the application' );
+			throw new Exception( 'destination given is not yet handled by the application', 26 );
 		}
 
 		return $this->FileAdapter->move(
@@ -863,7 +872,8 @@ class JobHandler {
 	 */
 	public function moveJobGroup( $dest = '', $ControlJob = null ) {
 		if ( !( $ControlJob instanceof ControlJob ) ) {
-			throw new Exception( __METHOD__ . '() ControlJob provided is not a valid ControlJob.' );
+			error_log( __METHOD__ . '() ControlJob provided is not a valid ControlJob' );
+			throw new Exception( 'ControlJob provided is not a valid ControlJob', 1 );
 		}
 
 		$dest = filter_var( $dest, FILTER_SANITIZE_STRING );
@@ -877,7 +887,8 @@ class JobHandler {
 		}
 
 		if ( empty( $dest_path ) ) {
-			throw new Exception( __METHOD__ . '() destination [' . $dest . '] is not yet handled' );
+			error_log( __METHOD__ . '() destination [' . $dest . '] is not yet handled by the application' );
+			throw new Exception( 'destination given is not yet handled by the application', 26 );
 		}
 
 		return $this->FileAdapter->move(
@@ -895,7 +906,8 @@ class JobHandler {
 	 */
 	protected function openXmlFile( $Job = null ) {
 		if ( !( $Job instanceof Job ) ) {
-			throw new Exception( __METHOD__ . '() Job provided is not a valid Job.' );
+			error_log( __METHOD__ . '() Job provided is not a valid Job' );
+			throw new Exception( 'Job provided is not a valid Job', 1 );
 		}
 
 		switch ( $Job->schema ) {
@@ -983,7 +995,8 @@ class JobHandler {
 	 */
 	public function processJob( array $options = array() ) {
 		if ( !isset( $options['Job'] ) || !( $options['Job'] instanceof Job ) ) {
-			throw new Exception( __METHOD__ . '() no valid Job provided.' );
+			error_log( __METHOD__ . '() Job provided is not a valid Job' );
+			throw new Exception( 'Job provided is not a valid Job', 1 );
 		} else {
 			$Job = $options['Job'];
 		}
@@ -996,7 +1009,7 @@ class JobHandler {
 
 		// set-up the record request
 		$RecordRequest = null;
-		$Curl = new \Libcurl\Curl();
+		$Curl = new \Penn\Php\Curl();
 		$Curl->setHttpHeader( array( 'Accept: text/xml, application/xml' ) );
 
 		$request_options = array(
@@ -1021,7 +1034,8 @@ class JobHandler {
 		}
 
 		if ( !( $RecordRequest instanceof RequestInterface ) ) {
-			throw new Exception( __METHOD__ . '() job schema, [' . filter_var( $Job->schema, FILTER_SANITIZE_STRING ) . '], is not yet handled by the application' );
+			error_log( __METHOD__ . '() job schema, [' . filter_var( $Job->schema, FILTER_SANITIZE_STRING ) . '], is not yet handled by the application' );
+			throw new Exception( 'job schema given is not yet handled by the application', 26 );
 		}
 
 		if ( !$RecordResponse->loadRecordFromXml() ) {
@@ -1049,11 +1063,13 @@ class JobHandler {
 	 */
 	protected function saveXmlSnippet( $Job, $xml_snippet = '' ) {
 		if ( !( $Job instanceof Job ) ) {
-			throw new Exception( __METHOD__ . '() Job provided is not a valid Job.' );
+			error_log( __METHOD__ . '() Job provided is not a valid Job' );
+			throw new Exception( 'Job provided is not a valid Job', 1 );
 		}
 
 		if ( empty( $xml_snippet ) ) {
-			throw new Exception( __METHOD__ . '() no XML snippet provided' );
+			error_log( __METHOD__ . '() no XML snippet provided' );
+			throw new Exception( 'no XML snippet provided', 25 );
 		}
 
 		$xml_snippet = $xml_snippet . PHP_EOL;
@@ -1087,51 +1103,63 @@ class JobHandler {
 	 */
 	protected function validate() {
 		if ( empty( $this->control_job_filename ) || !is_string( $this->control_job_filename ) ) {
-			throw new Exception( __METHOD__ . '() control_job_filename not provided', 2 );
+			error_log( __METHOD__ . '() control_job_filename not provided' );
+			throw new Exception( 'control_job_filename not provided', 2 );
 		}
 
 		if ( !( $this->FileAdapter instanceof FileAdapterInterface ) ) {
-			throw new Exception( __METHOD__ . '() FileAdapter provided is not a valid FileAdapter', 2 );
+			error_log( __METHOD__ . '() FileAdapter provided is not a valid FileAdapter' );
+			throw new Exception( 'FileAdapter provided is not a valid FileAdapter', 2 );
 		}
 
 		if ( empty( $this->job_archive_path ) || !is_string( $this->job_archive_path ) ) {
-			throw new Exception( __METHOD__ . '() job_archive_path not provided', 2 );
+			error_log( __METHOD__ . '() job_archive_path not provided' );
+			throw new Exception( 'job_archive_path not provided', 2 );
 		}
 
 		if ( empty( $this->job_completed_path ) || !is_string( $this->job_completed_path ) ) {
-			throw new Exception( __METHOD__ . '() job_completed_path not provided', 2 );
+			error_log( __METHOD__ . '() job_completed_path not provided' );
+			throw new Exception( 'job_completed_path not provided', 2 );
 		}
 
 		if ( empty( $this->job_failed_path ) || !is_string( $this->job_failed_path ) ) {
-			throw new Exception( __METHOD__ . '() job_failed_path not provided', 2 );
+			error_log( __METHOD__ . '() job_failed_path not provided' );
+			throw new Exception( 'job_failed_path not provided', 2 );
 		}
 
 		if ( empty( $this->job_filename_prefix ) || !is_string( $this->job_filename_prefix ) ) {
-			throw new Exception( __METHOD__ . '() job_filename_prefix not provided', 2 );
+			error_log( __METHOD__ . '() job_filename_prefix not provided' );
+			throw new Exception( 'job_filename_prefix not provided', 2 );
 		}
 
 		if ( empty( $this->job_output_path ) || !is_string( $this->job_output_path ) ) {
-			throw new Exception( __METHOD__ . '() job_output_path not provided', 2 );
+			error_log( __METHOD__ . '() job_output_path not provided' );
+			throw new Exception( 'job_output_path not provided', 2 );
 		}
 
 		if ( empty( $this->job_path ) || !realpath( $this->job_path ) ) {
-			throw new Exception( __METHOD__ . '() job_path provided is not a valid path', 2 );
+			error_log( __METHOD__ . '() job_path provided is not a valid path' );
+			throw new Exception( 'job_path provided is not a valid path', 2 );
 		}
 
 		if ( empty( $this->job_processing_path ) || !is_string( $this->job_processing_path ) ) {
-			throw new Exception( __METHOD__ . '() job_processing_path not provided', 2 );
+			error_log( __METHOD__ . '() job_processing_path not provided' );
+			throw new Exception( 'job_processing_path not provided', 2 );
 		}
 
 		if ( empty( $this->job_succeeded_path ) || !is_string( $this->job_succeeded_path ) ) {
-			throw new Exception( __METHOD__ . '() job_succeeded_path not provided', 2 );
+			error_log( __METHOD__ . '() job_succeeded_path not provided' );
+			throw new Exception( 'job_succeeded_path not provided', 2 );
 		}
 
 		if ( empty( $this->job_to_process_path ) || !is_string( $this->job_to_process_path ) ) {
-			throw new Exception( __METHOD__ . '() job_to_process_path not provided', 2 );
+			error_log( __METHOD__ . '() job_to_process_path not provided' );
+			throw new Exception( 'job_to_process_path not provided', 2 );
 		}
 
 		if ( empty( $this->storage_path ) || !realpath( $this->storage_path ) ) {
-			throw new Exception( __METHOD__ . '() storage_path provided is not a valid path', 2 );
+			error_log( __METHOD__ . '() storage_path provided is not a valid path' );
+			throw new Exception( 'storage_path provided is not a valid path', 2 );
 		}
 	}
 

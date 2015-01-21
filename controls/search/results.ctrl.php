@@ -45,7 +45,7 @@
 	/**
 	 * set-up csrf
 	 */
-	$Csrf = new \OWASP\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
+	$Csrf = new Penn\Owasp\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
 
 
 	try {
@@ -124,7 +124,7 @@
 
 
 			// set-up the search
-			$Curl = new Libcurl\Curl();
+			$Curl = new Penn\Php\Curl();
 			$Curl->setHttpHeader( array( 'Accept: application/json' ) );
 			$search_request_options['RequestService'] = $Curl;
 			$SearchRequest = new Europeana\Api\Request\Search( $search_request_options );
