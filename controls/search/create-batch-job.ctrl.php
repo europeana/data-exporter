@@ -125,9 +125,7 @@
 
 
 			// set api key
-			if ( isset( $Config->europeana_api->wskey ) ) {
-				$wskey = filter_var( $Config->europeana_api->wskey, FILTER_SANITIZE_STRING );
-			}
+			$wskey = filter_var( $Config->europeana_api->wskey, FILTER_SANITIZE_STRING );
 
 			// set search options
 			$search_request_options = array(

@@ -1,8 +1,8 @@
 <?php
 
-	use \Europeana\Api\Helpers\Response as Response_Helper;
-	use \Europeana\Api\Helpers\Request as Request_Helper;
-	use \Penn\Html\Script;
+	use Europeana\Api\Helpers\Response as Response_Helper;
+	use Europeana\Api\Helpers\Request as Request_Helper;
+	use Penn\Html\Script;
 
 	/**
 	 * set-up page
@@ -110,9 +110,7 @@
 
 
 			// set api key
-			if ( isset( $Config->europeana_api->wskey ) ) {
-				$wskey = filter_var( $Config->europeana_api->wskey, FILTER_SANITIZE_STRING );
-			}
+			$wskey = filter_var( $Config->europeana_api->wskey, FILTER_SANITIZE_STRING );
 
 			// set search options
 			$search_request_options = array(
