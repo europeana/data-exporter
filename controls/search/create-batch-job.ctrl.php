@@ -124,6 +124,10 @@
 			$query_string = Request_Helper::removeQueryParam( $query_string, 'start' );
 
 
+			// add profile to the query string
+			$query_string .= '&profile=minimal';
+
+
 			// set api key
 			$wskey = filter_var( $Config->europeana_api->wskey, FILTER_SANITIZE_STRING );
 
@@ -159,7 +163,7 @@
 
 			// process the response
 			// exceeded job max
-			if ( $SearchResponse->totalResults > $Config->jobs->job_max ) {
+			if ( $SearchResponse->totalResults > $Config->jobs->max_allowed ) {
 
 				$html_result = '<pre class="prettyprint">{ success: false, message: "total results exceeded the maximum number of items per job" }</pre>';
 

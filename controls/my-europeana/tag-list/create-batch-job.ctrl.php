@@ -164,7 +164,7 @@
 
 			// process the response
 			// exceeded job max
-			if ( $TagResponse->totalResults > $Config->jobs->job_max ) {
+			if ( $TagResponse->totalResults > $Config->jobs->max_allowed ) {
 
 				$html_result = '<pre class="prettyprint">{ success: false, message: "total results exceeded the maximum number of items per job" }</pre>';
 

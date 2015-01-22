@@ -4,47 +4,52 @@
 	include 'bootstrap.php';
 
 	use App\BatchJobs\ControlJob as ControlJob;
+	use App\BatchJobs\Job as Job;
 	use App\BatchJobs\JobHandler as JobHandler;
 
 	$job = array();
 
 	try {
 
+		$BatchJobHandler = new JobHandler(
+			array(
+				'FileAdapter' => Penn\Php\File::getInstance(),
+				'storage_path' => APPLICATION_PATH
+			)
+		);
+
+		$count = 0;
+
 		do {
 
-			$BatchJobHandler = new JobHandler(
-				array(
-					'FileAdapter' => Penn\Php\File::getInstance(),
-					'storage_path' => APPLICATION_PATH
-				)
-			);
+			// get a ControlJob if no items exisit in to-process or processing for a job group
+			$job_queue_result = $BatchJobHandler->getJobFromQueue();
+			$ControlJob = $job_queue_result['ControlJob'];
+			$Job = $job_queue_result['Job'];
 
-			$count = 0;
+			if (
+				$Job instanceof Job ||
+				!( $ControlJob instanceof ControlJob ) ||
+				!$ControlJob->all_jobs_created ||
+				$ControlJob->creating_jobs
+			) {
+				break;
+			}
 
-			do {
+			// close output file
+			$BatchJobHandler->closeXmlFile( $ControlJob );
 
-				// get a ControlJob if no items exisit in to process or processing for a job group
-				$JobControl = $BatchJobHandler->getCompletedJobGroup();
+			// move the job group to cli-jobs-completed
+			$BatchJobHandler->moveJobGroup( 'job_completed_path', $ControlJob );
+			$count += 1;
 
-				if ( !( $JobControl instanceof ControlJob ) ) {
-					break;
-				}
+		} while ( $count < $Config->job_groups->max_to_process_per_run );
 
-				// close output file
-				$BatchJobHandler->closeXmlFile( $JobControl );
-
-				// move the job group to cli-jobs-completed
-				$BatchJobHandler->moveJobGroup( 'job_completed_path', $JobControl );
-
-				// @todo create a job where at least one job gets stuck in processing
-				// how to deal with that scenario?
-
-				unset( $JobControl );
-				$count += 1;
-
-			} while ( $count < $Config->jobs->process_completed_jobs_limit );
-
-		} while ( false );
+		if ( $count > 0 ) {
+			echo date( 'r' ) . ' processed ' . $count . ( $count > 1 ? ' job groups' : ' job group' ) . PHP_EOL;
+		} else {
+			echo date( 'r' ) . ' no job groups to process' . PHP_EOL;
+		}
 
 	} catch ( Exception $e ) {
 

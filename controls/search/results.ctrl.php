@@ -109,6 +109,10 @@
 			$query_string = Request_Helper::removeQueryParam( $query_string, 'start' );
 
 
+			// add profile to the query string
+			$query_string .= '&profile=minimal';
+
+
 			// set api key
 			$wskey = filter_var( $Config->europeana_api->wskey, FILTER_SANITIZE_STRING );
 
@@ -143,13 +147,13 @@
 
 
 			// process the response
-			if ( $SearchResponse->totalResults > $Config->jobs->job_max ) {
+			if ( $SearchResponse->totalResults > $Config->jobs->max_allowed ) {
 
 				$html_result .=
 					sprintf(
 						'<h2 class="page-header">batch job</h2><p>the total result set of <b>%s</b> items exceeds the maximum job limit of <b>%s</b> items. you need to narrow down the result set in order to create a batch job.</p>',
 						number_format( $SearchResponse->totalResults ),
-						number_format( $Config->jobs->job_max )
+						number_format( $Config->jobs->max_allowed )
 					);
 
 				$html_result .= Response_Helper::getResponseImagesWithLinks( $SearchResponse );

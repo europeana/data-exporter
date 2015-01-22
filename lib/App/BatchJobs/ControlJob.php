@@ -31,7 +31,7 @@ class ControlJob extends JobAbstract {
 	/**
 	 * @param {array} $options
 	 */
-	public function populate( array $options = array() ) {
+	public function populate( $options = array() ) {
 		parent::populate( $options );
 
 		if ( isset( $options['all_jobs_created'] ) && is_bool( $options['all_jobs_created'] ) ) {

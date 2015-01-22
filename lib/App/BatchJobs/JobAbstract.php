@@ -49,17 +49,17 @@ abstract class JobAbstract {
 
 
 	/**
-	 * @param {array} $options
+	 * @param {array} $properties
 	 * @param {bool} $lazy_populate
 	 */
-	public function __construct( array $options = array(), $lazy_populate = false ) {
+	public function __construct( $properties = array(), $lazy_populate = false ) {
 		$this->init();
 
 		if ( $lazy_populate ) {
 			return;
 		}
 
-		$this->populate( $options );
+		$this->populate( $properties );
 	}
 
 	protected function init() {
@@ -74,39 +74,44 @@ abstract class JobAbstract {
 	}
 
 	/**
-	 * @param {array} $options
+	 * @param {array} $properties
 	 */
-	public function populate( array $options = array() ) {
-		if ( isset( $options['endpoint'] ) && is_string( $options['endpoint'] ) ) {
-			$this->endpoint = filter_var( $options['endpoint'], FILTER_SANITIZE_STRING );
+	public function populate( $properties = array() ) {
+		if ( !is_array( $properties ) ) {
+			error_log( __METHOD__ . '() $properties provided are not an array' );
+			throw new Exception( 'parameter type error', 1 );
 		}
 
-		if ( isset( $options['job_group_id'] ) && is_string( $options['job_group_id'] ) ) {
-			$this->job_group_id = filter_var( $options['job_group_id'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['endpoint'] ) && is_string( $properties['endpoint'] ) ) {
+			$this->endpoint = filter_var( $properties['endpoint'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['output_filename'] ) && is_string( $options['output_filename'] ) ) {
-			$this->output_filename = filter_var( $options['output_filename'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['job_group_id'] ) && is_string( $properties['job_group_id'] ) ) {
+			$this->job_group_id = filter_var( $properties['job_group_id'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['params'] ) && is_string( $options['params'] ) ) {
-			$this->params = filter_var( $options['params'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['output_filename'] ) && is_string( $properties['output_filename'] ) ) {
+			$this->output_filename = filter_var( $properties['output_filename'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['schema'] ) && is_string( $options['schema'] ) ) {
-			$this->schema = filter_var( $options['schema'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['params'] ) && is_string( $properties['params'] ) ) {
+			$this->params = filter_var( $properties['params'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['timestamp'] ) && is_int( $options['timestamp'] ) ) {
-			$this->timestamp = (int) $options['timestamp'];
+		if ( isset( $properties['schema'] ) && is_string( $properties['schema'] ) ) {
+			$this->schema = filter_var( $properties['schema'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['total_records_found'] ) && is_int( $options['total_records_found'] ) ) {
-			$this->total_records_found = (int) $options['total_records_found'];
+		if ( isset( $properties['timestamp'] ) && is_int( $properties['timestamp'] ) ) {
+			$this->timestamp = (int) $properties['timestamp'];
 		}
 
-		if ( isset( $options['username'] ) && is_string( $options['username'] ) ) {
-			$this->username = filter_var( $options['username'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['total_records_found'] ) && is_int( $properties['total_records_found'] ) ) {
+			$this->total_records_found = (int) $properties['total_records_found'];
+		}
+
+		if ( isset( $properties['username'] ) && is_string( $properties['username'] ) ) {
+			$this->username = filter_var( $properties['username'], FILTER_SANITIZE_STRING );
 		}
 	}
 

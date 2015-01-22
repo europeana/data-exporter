@@ -1,5 +1,5 @@
 .htaccess
-config.ini
+application.config.php
 cli-jobs-completed/**/*
 cli-jobs/**/*
 cli-output/*.xml

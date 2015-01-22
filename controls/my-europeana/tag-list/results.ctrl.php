@@ -143,13 +143,13 @@
 
 
 			// process the response
-			if ( $TagResponse->totalResults > $Config->jobs->job_max ) {
+			if ( $TagResponse->totalResults > $Config->jobs->max_allowed ) {
 
 				$html_result .=
 					sprintf(
 						'<h2 class="page-header">batch job</h2><p>the total result set of <b>%s</b> items exceeds the maximum job limit of <b>%s</b> items. you need to narrow down the result set in order to create a batch job.</p>',
 						number_format( $TagResponse->totalResults ),
-						number_format( $Config->jobs->job_max )
+						number_format( $Config->jobs->max_allowed )
 					);
 
 					$html_result .= Europeana\Api\Helpers\Response::getResponseImagesWithLinks( $TagResponse );

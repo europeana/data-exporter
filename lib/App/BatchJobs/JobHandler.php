@@ -43,6 +43,11 @@ class JobHandler {
 	/**
 	 * @var {string}
 	 */
+	public $job_group_id;
+
+	/**
+	 * @var {string}
+	 */
 	public $job_path;
 
 	/**
@@ -81,18 +86,13 @@ class JobHandler {
 	 */
 	protected $allowed_state_paths;
 
-	/**
-	 * @var {string}
-	 */
-	protected $job_group_id;
-
 
 	/**
-	 * @param {array} $options
+	 * @param {array} $properties
 	 */
-	public function __construct( array $options = array() ) {
+	public function __construct( $properties = array() ) {
 		$this->init();
-		$this->populate( $options );
+		$this->populate( $properties );
 	}
 
 	/**
@@ -223,6 +223,52 @@ class JobHandler {
 	}
 
 	/**
+	 * attempts to find a ControlJob that has not yet created all of its batch jobs
+	 *
+	 * @param array $options
+	 * @param array $options['job-path']
+	 */
+	protected function findControlJobInQueue( $options = array() ) {
+		if ( !is_array( $options ) ) {
+			error_log( __METHOD__ . '() $options provided are not an array' );
+			throw new Exception( 'options provided are not an array', 1 );
+		}
+
+		if ( !in_array( $options['job-path'], $this->allowed_job_paths ) ) {
+			error_log( __METHOD__ . '() job-path [' . filter_var( $options['job-path'], FILTER_SANITIZE_STRING ) . '] not yet handled by the application' );
+			throw new Exception( 'job-path given not yet handled by the application', 26 );
+		}
+
+		$result = null;
+		$job_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_path );
+
+		// find a job group directory in the given job path
+		foreach ( $job_directory as $job_directory_fileinfo ) {
+			if ( !$job_directory_fileinfo->isDot() ) {
+
+				// found a job group directory
+				if ( $job_directory_fileinfo->isDir() ) {
+
+					// read the ControlJob
+					$control_job_path_and_filename = $this->storage_path . '/' . $this->job_path . '/' . $job_directory_fileinfo->getFilename() . '/' . $this->getControlJobFilename();
+
+					if ( file_exists( $control_job_path_and_filename ) ) {
+						$ControlJob = new ControlJob( include $control_job_path_and_filename );
+					}
+
+					// does it have jobs to create
+					if ( !$ControlJob->all_jobs_created ) {
+						$result = $ControlJob;
+						break;
+					}
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	/**
 	 * tries to find a job and return it.
 	 *
 	 * the $options determine which type of job state to look for
@@ -239,22 +285,31 @@ class JobHandler {
 	 * @param {string} $options['job-state-paths'][]
 	 * one of $this->allowed_state_paths
 	 *
-	 * @return {null|ControlJob} $result['ControlJob']
-	 * @return {null|Job} $result['Job']
+	 * @return {array}
+	 * $result['ControlJob']
+	 * $result['Job']
+	 * $result['job-state-path']
 	 */
-	protected function findJob( array $options = array() ) {
+	protected function findJob( $options = array() ) {
+		if ( !is_array( $options ) ) {
+			error_log( __METHOD__ . '() $options provided are not an array' );
+			throw new Exception( 'options provided are not an array', 1 );
+		}
+
 		$result = array(
 			'ControlJob' => null,
-			'Job' => null
+			'Job' => null,
+			'job-state-path' => ''
 		);
 
+		// set defaults if no option provided
 		if ( !isset( $options['job-required'] ) || !is_bool( $options['job-required'] ) ) {
 			$options['job-required'] = true;
 		}
 
+		// find a job group directory
 		$job_directory = new \DirectoryIterator ( $this->storage_path . '/' . $this->job_path );
 
-		// find a job group directory
 		foreach ( $job_directory as $job_directory_fileinfo ) {
 			if ( !$job_directory_fileinfo->isDot() ) {
 
@@ -275,7 +330,7 @@ class JobHandler {
 						if ( !$options['job-required'] && $result['ControlJob'] instanceof ControlJob ) {
 							break;
 
-						// if a Job  is required and a Job was returned, stop
+						// if a Job is required and a Job was returned, stop
 						} elseif ( $result['Job'] instanceof Job ) {
 							break;
 						}
@@ -311,22 +366,33 @@ class JobHandler {
 	 *
 	 * @throws {Exception}
 	 *
-	 * @return {null|ControlJob} $result['ControlJob']
-	 * @return {null|Job} $result['Job']
+	 * @return {array}
+	 * $result['ControlJob']
+	 * $result['Job']
+	 * $result['job-in-state']
 	 */
-	protected function findJobInState( array $options = array() ) {
-		$default_options = array(
-			'job-path' => 'job_path',
-			'job-required' => true
-		);
+	protected function findJobInState( $options = array() ) {
+		if ( !is_array( $options ) ) {
+			error_log( __METHOD__ . '() $options provided are not an array' );
+			throw new Exception( 'options provided are not an array', 1 );
+		}
 
 		$result = array(
 			'ControlJob' => null,
-			'Job' => null
+			'Job' => null,
+			'job-state-path' => ''
 		);
 
-		$options = array_merge( $default_options, $options );
+		// set defaults if no option provided
+		if ( empty( $options['job-path'] ) || !is_string( $options['job-path'] ) ) {
+			$options['job-path'] = 'job_path';
+		}
 
+		if ( !isset( $options['job-required'] ) || !is_bool( $options['job-required'] ) ) {
+			$options['job-required'] = true;
+		}
+
+		// validate
 		if ( !isset( $options['job-group'] ) || !is_string( $options['job-group'] ) ) {
 			error_log( __METHOD__ . '() job-group not provided.' );
 			throw new Exception( 'job-group not provided.', 25 );
@@ -362,6 +428,7 @@ class JobHandler {
 			// found a Job, stop searching
 			if ( !$job_fileinfo->isDot() && !$job_fileinfo->isDir() ) {
 				$job_filepath_and_name = $this->storage_path . '/' . $this->job_path  . '/' . $options['job-group'] . '/' . $this->{$options['job-state-path']} . '/' . $job_fileinfo->getFilename();
+				$result['job-state-path'] = $options['job-state-path'];
 				break;
 			}
 
@@ -405,30 +472,13 @@ class JobHandler {
 	}
 
 	/**
-	 * retrieves the first job group that has no more to process or processing jobs
-	 *
-	 * @return {null|ControlJob}
-	 */
-	public function getCompletedJobGroup() {
-		$result = $this->findJob(
-			array(
-				'job-state-paths' => array( 'job_to_process_path', 'job_processing_path' ),
-				'job-required' => false
-			)
-		);
-
-		if ( empty( $result['Job'] ) ) {
-			return $result['ControlJob'];
-		}
-
-		return null;
-	}
-
-	/**
 	 * @param {string} $job_group_id
 	 * @param {string} $job_path
 	 *
-	 * @return {null|JobControl}
+	 * @return {null|array}
+	 * $result['ControlJob']
+	 * $result['Job']
+	 * $result['job-state-path']
 	 */
 	public function getControlJob( $job_group_id = '', $job_path = 'job_path' ) {
 		$job_group_id = filter_var( $job_group_id, FILTER_SANITIZE_STRING );
@@ -442,7 +492,30 @@ class JobHandler {
 			)
 		);
 
-		return $result['ControlJob'];
+		return $result;
+	}
+
+	/**
+	 * attempts to retrieve a ControlJob that has not yet created all of its batch jobs
+	 *
+	 * @param string $job_path
+	 * @return null|ControlJob
+	 */
+	public function getControlJobFromQueue( $job_path = 'job_path' ) {
+		$result = null;
+		$job_path = filter_var( $job_path, FILTER_SANITIZE_STRING );
+
+		$result = $this->findControlJobInQueue(
+			array(
+				'job-path' => $job_path
+			)
+		);
+
+		if ( !empty( $result ) ) {
+			$this->job_group_id = $result->job_group_id;
+		}
+
+		return $result;
 	}
 
 	/**
@@ -567,7 +640,8 @@ class JobHandler {
 		$username = '';
 		$params = '';
 		$total = $job_info['job_to_process'] + $job_info['job_processing'] + $job_info['job_succeeded'] + $job_info['job_errors'];
-		$ControlJob = $this->getControlJob( $job_info['job_group'], $job_path );
+		$control_job_result = $this->getControlJob( $job_info['job_group'], $job_path );
+		$ControlJob = $control_job_result['ControlJob'];
 
 		if ( $ControlJob instanceof ControlJob ) {
 			$username = $ControlJob->username;
@@ -652,7 +726,8 @@ class JobHandler {
 			$username = '';
 			$params = '';
 			$total = $job['job_to_process'] + $job['job_processing'] + $job['job_succeeded'] + $job['job_errors'];
-			$ControlJob = $this->getControlJob( $job['job_group'] );
+			$control_job_result = $this->getControlJob( $job['job_group'] );
+			$ControlJob = $control_job_result['ControlJob'];
 
 			if ( $ControlJob instanceof ControlJob ) {
 				$username = $ControlJob->username;
@@ -741,18 +816,34 @@ class JobHandler {
 	/**
 	 * retrieves the first job to be processed.
 	 *
-	 * @return {null|Job}
+	 * the job paths checked are job_to_process_path and the job_processing_path.
+	 * job_processing_path is checked to make sure no jobs get stuck in there.
+	 *
+	 * @return {array}
+	 * $result['ControlJob']
+	 * $result['Job']
+	 * $result['job-state-path']
 	 */
 	public function getJobFromQueue() {
-		$result = null;
-
 		$result = $this->findJob(
 			array(
 				'job-state-paths' => array( 'job_to_process_path' )
 			)
 		);
 
-		return $result['Job'];
+		if ( empty( $result['Job'] ) ) {
+			$result = $this->findJob(
+				array(
+					'job-state-paths' => array( 'job_processing_path' )
+				)
+			);
+		}
+
+		if ( !empty( $result['Job'] ) ) {
+			$this->job_group_id = $result['Job']->job_group_id;
+		}
+
+		return $result;
 	}
 
 	/**
@@ -929,55 +1020,64 @@ class JobHandler {
 	}
 
 	/**
-	 * @param {array} $options
+	 * @param {array} $properties
 	 */
-	public function populate( array $options = array() ) {
-		if ( isset( $options['control_job_filename'] ) && is_string( $options['control_job_filename'] ) ) {
-			$this->control_job_filename = filter_var( $options['control_job_filename'], FILTER_SANITIZE_STRING );
+	public function populate( $properties = array() ) {
+		if ( !is_array( $properties ) ) {
+			error_log( __METHOD__ . '() $properties provided are not an array' );
+			throw new Exception( 'parameter type error', 1 );
 		}
 
-		if ( isset( $options['FileAdapter'] ) && $options['FileAdapter'] instanceof FileAdapterInterface ) {
-			$this->FileAdapter = $options['FileAdapter'];
+		if ( isset( $properties['control_job_filename'] ) && is_string( $properties['control_job_filename'] ) ) {
+			$this->control_job_filename = filter_var( $properties['control_job_filename'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['job_archive_path'] ) && is_string( $options['job_archive_path'] ) ) {
-			$this->job_archive_path = filter_var( $options['job_archive_path'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['FileAdapter'] ) && $properties['FileAdapter'] instanceof FileAdapterInterface ) {
+			$this->FileAdapter = $properties['FileAdapter'];
 		}
 
-		if ( isset( $options['job_completed_path'] ) && is_string( $options['job_completed_path'] ) ) {
-			$this->job_completed_path = filter_var( $options['job_completed_path'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['job_archive_path'] ) && is_string( $properties['job_archive_path'] ) ) {
+			$this->job_archive_path = filter_var( $properties['job_archive_path'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['job_failed_path'] ) && is_string( $options['job_failed_path'] ) ) {
-			$this->job_failed_path = filter_var( $options['job_failed_path'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['job_completed_path'] ) && is_string( $properties['job_completed_path'] ) ) {
+			$this->job_completed_path = filter_var( $properties['job_completed_path'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['job_filename_prefix'] ) && is_string( $options['job_filename_prefix'] ) ) {
-			$this->job_filename_prefix = filter_var( $options['job_filename_prefix'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['job_failed_path'] ) && is_string( $properties['job_failed_path'] ) ) {
+			$this->job_failed_path = filter_var( $properties['job_failed_path'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['job_output_path'] ) && is_string( $options['job_output_path'] ) ) {
-			$this->job_output_path = filter_var( $options['job_output_path'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['job_filename_prefix'] ) && is_string( $properties['job_filename_prefix'] ) ) {
+			$this->job_filename_prefix = filter_var( $properties['job_filename_prefix'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['job_path'] ) && is_string( $options['job_path'] ) ) {
-			$this->job_path = filter_var( $options['job_path'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['job_group_id'] ) && is_string( $properties['job_group_id'] ) ) {
+			$this->job_group_id = filter_var( $properties['job_group_id'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['job_processing_path'] ) && is_string( $options['job_processing_path'] ) ) {
-			$this->job_processing_path = filter_var( $options['job_processing_path'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['job_output_path'] ) && is_string( $properties['job_output_path'] ) ) {
+			$this->job_output_path = filter_var( $properties['job_output_path'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['job_succeeded_path'] ) && is_string( $options['job_succeeded_path'] ) ) {
-			$this->job_succeeded_path = filter_var( $options['job_succeeded_path'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['job_path'] ) && is_string( $properties['job_path'] ) ) {
+			$this->job_path = filter_var( $properties['job_path'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['job_to_process_path'] ) && is_string( $options['job_to_process_path'] ) ) {
-			$this->job_to_process_path = filter_var( $options['job_to_process_path'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['job_processing_path'] ) && is_string( $properties['job_processing_path'] ) ) {
+			$this->job_processing_path = filter_var( $properties['job_processing_path'], FILTER_SANITIZE_STRING );
 		}
 
-		if ( isset( $options['storage_path'] ) && is_string( $options['storage_path'] ) ) {
-			$this->storage_path = filter_var( $options['storage_path'], FILTER_SANITIZE_STRING );
+		if ( isset( $properties['job_succeeded_path'] ) && is_string( $properties['job_succeeded_path'] ) ) {
+			$this->job_succeeded_path = filter_var( $properties['job_succeeded_path'], FILTER_SANITIZE_STRING );
+		}
+
+		if ( isset( $properties['job_to_process_path'] ) && is_string( $properties['job_to_process_path'] ) ) {
+			$this->job_to_process_path = filter_var( $properties['job_to_process_path'], FILTER_SANITIZE_STRING );
+		}
+
+		if ( isset( $properties['storage_path'] ) && is_string( $properties['storage_path'] ) ) {
+			$this->storage_path = filter_var( $properties['storage_path'], FILTER_SANITIZE_STRING );
 		}
 
 		$this->validate();
@@ -1092,6 +1192,7 @@ class JobHandler {
 				array(
 					'content' => $xml_snippet,
 					'filename' => $Job->output_filename,
+					'mode' => 'a',
 					'storage_path' => $this->getJobPath( 'job_output_path', $Job )
 				)
 			);
@@ -1099,7 +1200,57 @@ class JobHandler {
 	}
 
 	/**
+	 * @param {ControlJob} $ControlJob
 	 * @throws {Exception}
+	 * @return {bool}
+	 */
+	public function updateControlJob( $ControlJob = null ) {
+		if ( !( $ControlJob instanceof ControlJob ) ) {
+			error_log( __METHOD__ . '() ControlJob provided is not a valid ControlJob.' );
+			throw new Exception( 'ControlJob provided is not a valid ControlJob.', 1 );
+		}
+
+		$this->ensureDirectories();
+		$content = '<?php '. PHP_EOL . 'return ' . var_export( get_object_vars( $ControlJob ), true ) . ';' . PHP_EOL;
+
+		return $this->FileAdapter->update(
+			array(
+				'content' => $content,
+				'filename' => $this->getControlJobFilename( $ControlJob ),
+				'mode' => 'w',
+				'storage_path' => $this->getJobPath( 'job_group_path', $ControlJob )
+			)
+		);
+	}
+
+	/**
+	 * @param Job $Job
+	 * @param string $path
+	 *
+	 * @throws Exception
+	 * @return bool
+	 */
+	public function updateJob( $Job = null, $path = 'job_processing_path' ) {
+		if ( !( $Job instanceof Job ) ) {
+			error_log( __METHOD__ . '() Job provided is not a valid Job.' );
+			throw new Exception( 'Job provided is not a valid Job.', 1 );
+		}
+
+		$this->ensureDirectories();
+		$content = '<?php '. PHP_EOL . 'return ' . var_export( get_object_vars( $Job ), true ) . ';' . PHP_EOL;
+
+		return $this->FileAdapter->update(
+			array(
+				'content' => $content,
+				'filename' => $this->getJobFilename( $Job ),
+				'mode' => 'w',
+				'storage_path' => $this->getJobPath( $path, $Job )
+			)
+		);
+	}
+
+	/**
+	 * @throws Exception
 	 */
 	protected function validate() {
 		if ( empty( $this->control_job_filename ) || !is_string( $this->control_job_filename ) ) {
