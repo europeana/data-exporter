@@ -1,5 +1,5 @@
 # Application config
-run "ln -nfs #{config.shared_path}/config/config.ini #{config.release_path}/config/config.ini"
+run "ln -nfs #{config.shared_path}/config/application.config.php #{config.release_path}/config/application.config.php"
 
 # cli-jobs
 run "mkdir -p #{config.shared_path}/cli-jobs"
