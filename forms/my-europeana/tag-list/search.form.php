@@ -48,6 +48,13 @@
 	'<h2 id="form-help" class="page-header">form help</h2>' .
 	'<p>this form uses the my europeana api method, <code>http://europeana.eu/api/v2/mydata/tag.json</code>, to retrieve a list of europeana objects tagged by a specific my europeana account. the account is identified by the public and private api keys you enter in the form.</p><p>some things to note:</p>' .
 
+	'<h4>where do i find my api keys</h4>' .
+	'<ol>' .
+		'<li>log into your <a href="http://europeana.eu/portal/myeuropeana#login">my europeana</a> account.</li>' .
+		'<li>go to the <a href="http://europeana.eu/portal/myeuropeana#api-keys">api keys</a> page.</li>' .
+		'<li>if you don’t already have an api key set, click on the “Get an API-Key” link to request one.</li>' .
+	'</ol>' .
+
 	'<h4>tag</h4>' .
 	'<ul>' .
 		'<li>when you provide no tag, the entire tag list for the user is retrieved.</li>' .
