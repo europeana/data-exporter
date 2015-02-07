@@ -27,8 +27,10 @@
 	$create_batch_job = false;
 	$data = array();
 	$debug = false;
+	$email = '';
 	$empty_result = '<pre class="prettyprint">[{}]</pre>';
 	$europeanaid = '';
+	$form_feedback = '';
 	$html_result = '';
 	$j_username = '';
 	$j_password = '';
@@ -110,6 +112,29 @@
 
 			if ( isset( $_POST['tag'] ) ) {
 				$tag = filter_var( $_POST['tag'], FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['email'] ) ) {
+				$email = filter_var( $_POST['email'], FILTER_VALIDATE_EMAIL );
+			}
+
+
+			// verify required fields
+			if ( empty( $j_username ) ) {
+				$form_feedback .= '<li class="error">please provide your valid public api key</li>';
+			}
+
+			if ( empty( $j_password ) ) {
+				$form_feedback .= '<li class="error">please provide your valid private api key</li>';
+			}
+
+			if ( empty( $email ) ) {
+				$form_feedback .= '<li class="error">please provide your valid email address</li>';
+			}
+
+			if ( !empty( $form_feedback ) ) {
+				$html_result .= '<ul id="form-feedback">' . $form_feedback. '</ul>';
+				break;
 			}
 
 
@@ -197,8 +222,7 @@
 							'record_id' => $item->europeanaId,
 							'schema' => $schema,
 							'timestamp' => time(),
-							'total_records_found' => $TagResponse->totalResults,
-							'username' => $TagResponse->username
+							'total_records_found' => (int) $TagResponse->totalResults
 						)
 					);
 
@@ -216,6 +240,7 @@
 					array(
 						'all_jobs_created' => true,
 						'creating_jobs' => false,
+						'email' => $email,
 						'endpoint' => $TagRequest->getEndpoint(),
 						'job_group_id' => $job_group_id,
 						'output_filename' => $output_filename,
@@ -223,8 +248,7 @@
 						'schema' => $schema,
 						'start' => $count,
 						'timestamp' => time(),
-						'total_records_found' => $TagResponse->totalResults,
-						'username' => $TagResponse->username
+						'total_records_found' => (int) $TagResponse->totalResults
 					)
 				);
 

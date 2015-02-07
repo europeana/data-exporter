@@ -25,6 +25,7 @@
 	 * set-up variables
 	 */
 	$debug = false;
+	$email = '';
 	$empty_result = '<pre class="prettyprint">[{}]</pre>';
 	$europeanaid = '';
 	$form_feedback = '';
@@ -83,11 +84,6 @@
 				$j_password = filter_var( $_POST['private-api-key'], FILTER_SANITIZE_STRING );
 			}
 
-			if ( empty( $j_username ) || empty( $j_password ) ) {
-				$html_result .= '<pre class="prettyprint">{ success: false, message: "missing credentials" }</pre>';
-				break;
-			}
-
 
 			// get regular form params
 			if ( isset( $_POST['debug'] ) && $_POST['debug'] === 'true' ) {
@@ -100,6 +96,29 @@
 
 			if ( isset( $_POST['tag'] ) ) {
 				$tag = filter_var( $_POST['tag'], FILTER_SANITIZE_STRING );
+			}
+
+			if ( isset( $_POST['email'] ) ) {
+				$email = filter_var( $_POST['email'], FILTER_VALIDATE_EMAIL );
+			}
+
+
+			// verify required fields
+			if ( empty( $j_username ) ) {
+				$form_feedback .= '<li class="error">please provide your valid public api key</li>';
+			}
+
+			if ( empty( $j_password ) ) {
+				$form_feedback .= '<li class="error">please provide your valid private api key</li>';
+			}
+
+			if ( empty( $email ) ) {
+				$form_feedback .= '<li class="error">please provide your valid email address</li>';
+			}
+
+			if ( !empty( $form_feedback ) ) {
+				$html_result .= '<ul id="form-feedback">' . $form_feedback. '</ul>';
+				break;
 			}
 
 

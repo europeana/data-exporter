@@ -13,6 +13,7 @@
 		'<input type="hidden" name="private-api-key" value="' . $j_password . '" />' .
 		'<input type="hidden" name="public-api-key" value="' . $j_username . '" />' .
 		'<input type="hidden" name="tag" value="' . $tag . '" />' .
+		'<input type="hidden" name="email" value="' . $email . '" />' .
 		'<p>' .
 			'<input type="submit" class="btn btn-default" value="create a batch job" />' .
 		'</p>' .

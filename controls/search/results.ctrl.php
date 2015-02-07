@@ -27,6 +27,7 @@
 	 * set-up variables
 	 */
 	$debug = false;
+	$email = '';
 	$empty_result = '<pre class="prettyprint">[{}]</pre>';
 	$form_feedback = '';
 	$html_result = '';
@@ -38,7 +39,6 @@
 	$search_result = '';
 	$start = 1;
 	$total_records_found = 0;
-	$username = '';
 	$wskey = '';
 
 
@@ -83,12 +83,22 @@
 				$query = filter_var( $_POST['query'], FILTER_SANITIZE_STRING );
 			}
 
-			if ( isset( $_POST['username'] ) ) {
-				$username = filter_var( $_POST['username'], FILTER_SANITIZE_STRING );
+			if ( isset( $_POST['email'] ) ) {
+				$email = filter_var( $_POST['email'], FILTER_VALIDATE_EMAIL );
 			}
 
+
+			// verify required fields
 			if ( empty( $query ) ) {
-				$html_result .= '<pre class="prettyprint">{ success: false, message: "no query provided" }</pre>';
+				$form_feedback .= '<li class="error">please provide a valid europeana query</li>';
+			}
+
+			if ( empty( $email ) ) {
+				$form_feedback .= '<li class="error">please provide your valid email address</li>';
+			}
+
+			if ( !empty( $form_feedback ) ) {
+				$html_result .= '<ul id="form-feedback">' . $form_feedback. '</ul>';
 				break;
 			}
 

@@ -29,6 +29,7 @@
 	 */
 	$create_batch_job = false;
 	$debug = false;
+	$email = '';
 	$empty_result = '<pre class="prettyprint">[{}]</pre>';
 	$form_feedback = '';
 	$html_result = '';
@@ -40,7 +41,6 @@
 	$search_result = '';
 	$start = 1;
 	$total_records_found = 0;
-	$username = '';
 	$wskey = '';
 
 
@@ -98,12 +98,27 @@
 				$query = filter_var( $_POST['query'], FILTER_SANITIZE_STRING );
 			}
 
-			if ( isset( $_POST['username'] ) ) {
-				$username = filter_var( $_POST['username'], FILTER_SANITIZE_STRING );
+			if ( isset( $_POST['email'] ) ) {
+				$email = filter_var( $_POST['email'], FILTER_VALIDATE_EMAIL );
 			}
 
 			if ( empty( $query ) ) {
 				$html_result .= '<pre class="prettyprint">{ success: false, message: "no query provided" }</pre>';
+				break;
+			}
+
+
+			// verify required fields
+			if ( empty( $query ) ) {
+				$form_feedback .= '<li class="error">please provide a valid europeana query</li>';
+			}
+
+			if ( empty( $email ) ) {
+				$form_feedback .= '<li class="error">please provide your valid email address</li>';
+			}
+
+			if ( !empty( $form_feedback ) ) {
+				$html_result .= '<ul id="form-feedback">' . $form_feedback. '</ul>';
 				break;
 			}
 
@@ -196,8 +211,7 @@
 							'record_id' => $item->id,
 							'schema' => $schema,
 							'timestamp' => time(),
-							'total_records_found' => $SearchResponse->totalResults,
-							'username' => $username
+							'total_records_found' => (int) $SearchResponse->totalResults
 						)
 					);
 
@@ -209,6 +223,7 @@
 					array(
 						'all_jobs_created' => $count === $SearchResponse->totalResults ? true : false,
 						'creating_jobs' => false,
+						'email' => $email,
 						'endpoint' => $SearchRequest->getEndpoint(),
 						'job_group_id' => $job_group_id,
 						'output_filename' => $output_filename,
@@ -216,8 +231,7 @@
 						'schema' => $schema,
 						'start' => $count,
 						'timestamp' => time(),
-						'total_records_found' => $SearchResponse->totalResults,
-						'username' => $username
+						'total_records_found' => (int) $SearchResponse->totalResults
 					)
 				);
 

@@ -42,11 +42,6 @@ abstract class JobAbstract {
 	 */
 	public $total_records_found;
 
-	/**
-	 * @var {string}
-	 */
-	public $username;
-
 
 	/**
 	 * @param {array} $properties
@@ -70,7 +65,6 @@ abstract class JobAbstract {
 		$this->schema = '';
 		$this->timestamp = 0;
 		$this->total_records_found = 0;
-		$this->username = '';
 	}
 
 	/**
@@ -108,10 +102,6 @@ abstract class JobAbstract {
 
 		if ( isset( $properties['total_records_found'] ) && is_int( $properties['total_records_found'] ) ) {
 			$this->total_records_found = (int) $properties['total_records_found'];
-		}
-
-		if ( isset( $properties['username'] ) && is_string( $properties['username'] ) ) {
-			$this->username = filter_var( $properties['username'], FILTER_SANITIZE_STRING );
 		}
 	}
 

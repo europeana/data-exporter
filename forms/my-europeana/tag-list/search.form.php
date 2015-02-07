@@ -9,14 +9,14 @@
 		'<p>' .
 			'<label>' .
 				'my europeana user’s public api key' .
-				'<input type="text" name="public-api-key" placeholder="&lt;public-api-key>" autofocus class="form-control" />' .
+				'<input type="text" name="public-api-key" placeholder="&lt;public-api-key>" class="form-control" autofocus required />' .
 			'</label>' .
 		'</p>' .
 
 		'<p>' .
 			'<label>' .
 				'my europeana user’s private api key' .
-				'<input type="text" name="private-api-key" placeholder="&lt;private-api-key>" class="form-control" />' .
+				'<input type="text" name="private-api-key" placeholder="&lt;private-api-key>" class="form-control" required />' .
 			'</label>' .
 		'</p>' .
 
@@ -37,6 +37,13 @@
 		'<p>' .
 			'<label>' .
 				'<input type="checkbox" name="debug" value="true" /> display request and response details' .
+			'</label>' .
+		'</p>' .
+
+		'<p>' .
+			'<label>' .
+				'email address' .
+				'<input type="email" name="email" class="form-control" placeholder="&lt;your.email@domain.com>" required />' .
 			'</label>' .
 		'</p>' .
 

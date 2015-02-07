@@ -3,15 +3,15 @@
 	return
 	'<p><a href="#form-help" title="form help">form help</a></p>' .
 
-	'<form action="/search/results/" method="post" rolse="form">' .
+	'<form action="/search/results/" method="post" role="form">' .
 		'<input type="hidden" name="' . $Csrf->getTokenKey() . '" value="' . $Csrf->getTokenValue() . '" />' .
 
 		'<p>' .
-			'<input type="text" name="query" class="form-control" placeholder="&lt;europeana query>" autofocus/>' .
+			'<input type="text" name="query" class="form-control" placeholder="&lt;europeana query>" autofocus required />' .
 		'</p>' .
 
 		'<p>' .
-			'<input type="text" name="username" class="form-control" placeholder="&lt;username>" />' .
+			'<input type="email" name="email" class="form-control" placeholder="&lt;your.email@domain.com>" required />' .
 		'</p>' .
 
 		'<p>' .

@@ -16,37 +16,60 @@ class ControlJob extends JobAbstract {
 	public $creating_jobs;
 
 	/**
+	 * @var {string}
+	 */
+	public $email;
+
+	/**
 	 * @var {int}
 	 */
 	public $start;
+
+	/**
+	 * @var {string}
+	 */
+	public $username;
 
 
 	protected function init() {
 		parent::init();
 		$this->all_jobs_created = false;
 		$this->creating_jobs = false;
+		$this->email = '';
 		$this->start = 0;
+		$this->username = '';
 	}
 
 	/**
-	 * @param {array} $options
+	 * @param {array} $properties
 	 */
-	public function populate( $options = array() ) {
-		parent::populate( $options );
+	public function populate( $properties = array() ) {
+		parent::populate( $properties );
 
-		if ( isset( $options['all_jobs_created'] ) && is_bool( $options['all_jobs_created'] ) ) {
-			$this->all_jobs_created = (bool) $options['all_jobs_created'];
+		if ( isset( $properties['all_jobs_created'] ) && is_bool( $properties['all_jobs_created'] ) ) {
+			$this->all_jobs_created = (bool) $properties['all_jobs_created'];
 		}
 
-		if ( isset( $options['creating_jobs'] ) && is_bool( $options['creating_jobs'] ) ) {
-			$this->creating_jobs = (bool) $options['creating_jobs'];
+		if ( isset( $properties['creating_jobs'] ) && is_bool( $properties['creating_jobs'] ) ) {
+			$this->creating_jobs = (bool) $properties['creating_jobs'];
 		}
 
-		if ( isset( $options['start'] ) && is_int( $options['start'] ) ) {
-			$this->start = (int) $options['start'];
+		if ( isset( $properties['email'] ) && is_string( $properties['email'] ) ) {
+			$this->email = filter_var( $properties['email'], FILTER_VALIDATE_EMAIL );
 		}
 
+		if ( isset( $properties['start'] ) && is_int( $properties['start'] ) ) {
+			$this->start = (int) $properties['start'];
+		}
+
+		$this->setUsername();
 		$this->validate();
+	}
+
+	protected function setUsername() {
+		if ( empty( $this->username ) && !empty( $this->email ) ) {
+			$this->username = strstr( $this->email, '@', true );
+		}
 	}
 
 	/**
@@ -54,6 +77,11 @@ class ControlJob extends JobAbstract {
 	 */
 	public function validate() {
 		parent::validate();
+
+		if ( empty( $this->email ) || !is_string( $this->email ) ) {
+			error_log( __METHOD__ . '() no email provided' );
+			throw new Exception( 'no email provided', 2 );
+		}
 	}
 
 }

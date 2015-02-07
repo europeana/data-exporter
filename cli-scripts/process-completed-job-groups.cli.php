@@ -6,8 +6,10 @@
 	use App\BatchJobs\ControlJob as ControlJob;
 	use App\BatchJobs\Job as Job;
 	use App\BatchJobs\JobHandler as JobHandler;
+	use Zend\Mail;
 
 	$job = array();
+	$mail_template = include 'completed-email.tpl.php';
 
 	try {
 
@@ -41,6 +43,35 @@
 
 			// move the job group to cli-jobs-completed
 			$BatchJobHandler->moveJobGroup( 'job_completed_path', $ControlJob );
+
+			// mail the user
+			$Mail = new Mail\Message();
+
+			$Mail->setBody(
+				sprintf(
+					filter_var( $mail_template['message'], FILTER_SANITIZE_STRING ),
+					str_replace( array( '.', '_' ), ' ', $ControlJob->username ),
+					$Config->host_name . '/queue/?job-group-id=' . $ControlJob->job_group_id
+				)
+			);
+
+			$Mail->setSubject(
+				sprintf(
+					filter_var( $mail_template['subject'], FILTER_SANITIZE_STRING ),
+					$ControlJob->job_group_id
+				)
+			);
+
+			$Mail->setFrom(
+				filter_var( $mail_template['from']['email'], FILTER_SANITIZE_STRING ),
+				filter_var( $mail_template['from']['label'], FILTER_SANITIZE_STRING )
+			);
+
+			$Mail->addTo( $ControlJob->email );
+
+			$transport = new Mail\Transport\Sendmail();
+			$transport->send( $Mail );
+
 			$count += 1;
 
 		} while ( $count < $Config->job_groups->max_to_process_per_run );
