@@ -80,7 +80,8 @@
 			}
 
 			if ( isset( $_POST['query'] ) ) {
-				$query = filter_var( $_POST['query'], FILTER_SANITIZE_STRING );
+				$query = urldecode( $_POST['query'] );
+				$query = filter_var( $query, FILTER_SANITIZE_STRING );
 			}
 
 			if ( isset( $_POST['email'] ) ) {
