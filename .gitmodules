@@ -1,9 +1,0 @@
-[submodule "lib/Europeana"]
-	path = lib/Europeana
-	url = git@github.com:dan-nl/Europeana.git
-[submodule "lib/Penn"]
-	path = lib/Penn
-	url = git@github.com:dan-nl/PennlineFramework.git
-[submodule "lib/Zend/Mail"]
-	path = lib/Zend/Mail
-	url = git@github.com:zendframework/Component_ZendMail.git
