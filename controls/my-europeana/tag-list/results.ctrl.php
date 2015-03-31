@@ -1,6 +1,6 @@
 <?php
 
-	use \Penn\Html\Script;
+	use \Pennline\Html\Script;
 
 	/**
 	 * set-up page
@@ -43,7 +43,7 @@
 	/**
 	 * set-up csrf
 	 */
-	$Csrf = new Penn\Owasp\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
+	$Csrf = new Pennline\Owasp\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
 
 
 	/**
@@ -123,7 +123,7 @@
 
 
 			// setup curl
-			$Curl = new Penn\Php\Curl( array( 'curl-followlocation' => true ) ); // because of 302 Moved Temporarily response from login.do
+			$Curl = new Pennline\Php\Curl( array( 'curl-followlocation' => true ) ); // because of 302 Moved Temporarily response from login.do
 			$Curl->setHttpHeader( array( 'Accept: application/json' ) );
 
 

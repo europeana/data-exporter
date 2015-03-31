@@ -2,7 +2,7 @@
 
 	use Europeana\Api\Helpers\Response as Response_Helper;
 	use Europeana\Api\Helpers\Request as Request_Helper;
-	use Penn\Html\Script;
+	use Pennline\Html\Script;
 
 	/**
 	 * set-up page
@@ -45,7 +45,7 @@
 	/**
 	 * set-up csrf
 	 */
-	$Csrf = new Penn\Owasp\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
+	$Csrf = new Pennline\Owasp\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
 
 
 	try {
@@ -137,7 +137,7 @@
 
 
 			// set-up the search
-			$Curl = new Penn\Php\Curl();
+			$Curl = new Pennline\Php\Curl();
 			$Curl->setHttpHeader( array( 'Accept: application/json' ) );
 			$search_request_options['RequestService'] = $Curl;
 			$SearchRequest = new Europeana\Api\Request\Search( $search_request_options );

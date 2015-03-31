@@ -1,0 +1,46 @@
+{
+	"name": "europeana/data-exporter",
+	"license": "EUPL-1.1",
+	"authors": [
+		{
+			"name": "dan entous",
+			"email": "dan.entous@pennlinepublishing.com"
+		}
+	],
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/pennline/config"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/pennline/http"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/pennline/html"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/pennline/owasp"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/pennline/php"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/dan-nl/europeana-api"
+		}
+	],
+	"require": {
+		"php": ">=5.3.2",
+		"pennline/config": "dev-master",
+		"pennline/html": "dev-master",
+		"pennline/http": "dev-master",
+		"pennline/owasp": "dev-master",
+		"pennline/php": "dev-master",
+		"europeana/api": "dev-master",
+		"zendframework/zend-mail": ">=2.3"
+	}
+}

@@ -13,12 +13,12 @@
 	$WebPage->view = 'html-layout.tpl.php';
 
 	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
-		$WebPage->addScript( new Penn\Html\Script( array( 'src' => '/js/prettify.js' ) ) );
+		$WebPage->addScript( new Pennline\Html\Script( array( 'src' => '/js/prettify.js' ) ) );
 	} else {
-		$WebPage->addScript( new Penn\Html\Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
+		$WebPage->addScript( new Pennline\Html\Script( array( 'content' => file_get_contents( 'public/js/prettify.min.js' ) ) ) );
 	}
 
-	$WebPage->addScript( new Penn\Html\Script( array( 'content' => 'prettyPrint();' ) ) );
+	$WebPage->addScript( new Pennline\Html\Script( array( 'content' => 'prettyPrint();' ) ) );
 
 
 	/**
@@ -45,7 +45,7 @@
 	/**
 	 * set-up csrf
 	 */
-	$Csrf = new Penn\Owasp\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
+	$Csrf = new Pennline\Owasp\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
 
 
 	/**
@@ -139,7 +139,7 @@
 
 
 			// setup curl
-			$Curl = new Penn\Php\Curl( array( 'curl-followlocation' => true ) ); // because of 302 Moved Temporarily response from login.do
+			$Curl = new Pennline\Php\Curl( array( 'curl-followlocation' => true ) ); // because of 302 Moved Temporarily response from login.do
 			$Curl->setHttpHeader( array( 'Accept: application/json' ) );
 
 
@@ -200,7 +200,7 @@
 
 				$BatchJobHandler = new JobHandler(
 					array(
-						'FileAdapter' => Penn\Php\File::getInstance(),
+						'FileAdapter' => Pennline\Php\File::getInstance(),
 						'storage_path' => APPLICATION_PATH
 					)
 				);

@@ -45,17 +45,20 @@
 /**
  * autoloader
  */
-	function __autoload( $class_name ) {
+	include 'vendor/autoload.php';
+
+	function psr0Autoloader( $class_name ) {
 		$include_path = str_replace( array( '\\', '_', '..', '.' ), array( '/' ), $class_name );
 		include $include_path . '.php';
 	}
 
+	spl_autoload_register( 'psr0Autoloader' );
 
 /**
  * config
  */
 	try {
-		$Config = new Penn\Config( include 'application.config.php' );
+		$Config = new Pennline\Config\Config( include 'application.config.php' );
 	} catch ( Exception $e ) {
 		echo 'we apologize, the application configuration is not available at this time.';
 		exit();

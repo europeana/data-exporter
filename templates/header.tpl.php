@@ -17,7 +17,7 @@
 		)
 	);
 
-	$Nav = new Penn\Html\Helpers\Nav( $menu_items );
+	$Nav = new Pennline\Html\Helpers\Nav( $menu_items );
 ?>
 <div id="header">
 	<a class="logo" href="/" title="<?php echo $Config->site_name; ?>"></a>

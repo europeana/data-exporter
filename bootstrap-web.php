@@ -2,7 +2,7 @@
 /**
  * session
  */
-	$Session = new Penn\Php\Session();
+	$Session = new Pennline\Php\Session();
 	$Session->sessionStart();
 
 
@@ -27,24 +27,24 @@
 /**
  * web page
  */
-	$WebPage = new Penn\Html\Document();
+	$WebPage = new Pennline\Html\Document();
 
 
 /**
  * web page meta
  */
-	$WebPage->addMeta( new Penn\Html\Meta( array( 'name' => 'viewport', 'content' => 'width=device-width, initial-scale=1' ) ) );
+	$WebPage->addMeta( new Pennline\Html\Meta( array( 'name' => 'viewport', 'content' => 'width=device-width, initial-scale=1' ) ) );
 
 
 /**
  * web page link defaults
  */
 	if ( isset( $_SERVER['PHP_ENV'] ) && $_SERVER['PHP_ENV'] === 'development'  ) {
-		$WebPage->addLink( new Penn\Html\Link( array( 'href' => '/css/prettify.css' ) ) );
-		$WebPage->addLink( new Penn\Html\Link( array( 'href' => '/css/css.css' ) ) );
+		$WebPage->addLink( new Pennline\Html\Link( array( 'href' => '/css/prettify.css' ) ) );
+		$WebPage->addLink( new Pennline\Html\Link( array( 'href' => '/css/css.css' ) ) );
 	} else {
-		$WebPage->addStyle( new Penn\Html\Style( array( 'content' => file_get_contents( 'public/css/prettify.min.css' ) ) ) );
-		$WebPage->addStyle( new Penn\Html\Style( array( 'content' => file_get_contents( 'public/css/css.min.css' ) ) ) );
+		$WebPage->addStyle( new Pennline\Html\Style( array( 'content' => file_get_contents( 'public/css/prettify.min.css' ) ) ) );
+		$WebPage->addStyle( new Pennline\Html\Style( array( 'content' => file_get_contents( 'public/css/css.min.css' ) ) ) );
 	}
 
 

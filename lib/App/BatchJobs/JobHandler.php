@@ -4,9 +4,9 @@ namespace App\BatchJobs;
 use App\BatchJobs\ControlJob as ControlJob;
 use App\BatchJobs\Job as Job;
 use Europeana\Api\Helpers\Response as Response_Helper;
-use Penn\Http\RequestInterface;
-use Penn\Php\Exception;
-use Penn\Php\FileAdapterInterface;
+use Pennline\Http\RequestInterface;
+use Pennline\Php\Exception;
+use Pennline\Php\FileAdapterInterface;
 
 class JobHandler {
 
@@ -1109,7 +1109,7 @@ class JobHandler {
 
 		// set-up the record request
 		$RecordRequest = null;
-		$Curl = new \Penn\Php\Curl();
+		$Curl = new \Pennline\Php\Curl();
 		$Curl->setHttpHeader( array( 'Accept: text/xml, application/xml' ) );
 
 		$request_options = array(

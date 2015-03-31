@@ -20,7 +20,7 @@ try {
 
 	$BatchJobHandler = new JobHandler(
 		array(
-			'FileAdapter' => Penn\Php\File::getInstance(),
+			'FileAdapter' => Pennline\Php\File::getInstance(),
 			'storage_path' => APPLICATION_PATH
 		)
 	);
@@ -37,7 +37,7 @@ try {
 
 		// retrieve the results of the query using the start parameter in the control job
 		// set-up the search
-		$Curl = new Penn\Php\Curl();
+		$Curl = new Pennline\Php\Curl();
 		$Curl->setHttpHeader( array( 'Accept: application/json' ) );
 		$wskey = filter_var( $Config->europeana_api->wskey, FILTER_SANITIZE_STRING );
 		$SearchRequest = new Europeana\Api\Request\Search(

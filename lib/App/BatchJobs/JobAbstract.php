@@ -1,6 +1,6 @@
 <?php
 namespace App\BatchJobs;
-use Php\Exception;
+use Pennline\Php\Exception;
 
 
 abstract class JobAbstract {

@@ -5,7 +5,7 @@
 	 */
 	$BatchJobHandler = new App\BatchJobs\JobHandler(
 		array(
-			'FileAdapter' => Penn\Php\File::getInstance(),
+			'FileAdapter' => Pennline\Php\File::getInstance(),
 			'storage_path' => APPLICATION_PATH
 		)
 	);

@@ -6,7 +6,7 @@
 	use App\BatchJobs\JobHandler as JobHandler;
 	use Europeana\Api\Helpers\Response as Response_Helper;
 	use Europeana\Api\Helpers\Request as Request_Helper;
-	use Penn\Html\Script;
+	use Pennline\Html\Script;
 
 	header( 'Content-Type: ' . $Config->content_type . '; charset=' . $Config->charset );
 
@@ -47,7 +47,7 @@
 	/**
 	 * set-up csrf
 	 */
-	$Csrf = new Penn\Owasp\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
+	$Csrf = new Pennline\Owasp\Csrf( array( 'Session' => $Session, 'token-key-obfuscate' => true ) );
 
 
 	try {
@@ -156,7 +156,7 @@
 
 
 			// set-up the search
-			$Curl = new Penn\Php\Curl();
+			$Curl = new Pennline\Php\Curl();
 			$Curl->setHttpHeader( array( 'Accept: application/json' ) );
 			$search_request_options['RequestService'] = $Curl;
 			$SearchRequest = new Europeana\Api\Request\Search( $search_request_options );
@@ -189,7 +189,7 @@
 
 				$BatchJobHandler = new JobHandler(
 					array(
-						'FileAdapter' => Penn\Php\File::getInstance(),
+						'FileAdapter' => Pennline\Php\File::getInstance(),
 						'storage_path' => APPLICATION_PATH
 					)
 				);
