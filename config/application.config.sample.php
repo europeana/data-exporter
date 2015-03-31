@@ -4,6 +4,7 @@ return array(
 	'content_type' => 'text/html',
 	'lang' => 'en',
 	'site_name' => '<your-site-name>',
+	'host_name' => 'http://localhost.com',
 
 	'europeana_api' => array (
 		'wskey' => '<your-api-key>'
