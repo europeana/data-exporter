@@ -1,0 +1,662 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "d3746edf0986e62fa387232108d5167c",
+    "packages": [
+        {
+            "name": "europeana/api",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dan-nl/europeana-api.git",
+                "reference": "7cf1c33ddf862b22f738e6c581e37e08fb12b469"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dan-nl/europeana-api/zipball/7cf1c33ddf862b22f738e6c581e37e08fb12b469",
+                "reference": "7cf1c33ddf862b22f738e6c581e37e08fb12b469",
+                "shasum": ""
+            },
+            "require": {
+                "pennline/http": "dev-master",
+                "pennline/php": "dev-master",
+                "php": ">=5.3.28"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Europeana\\Api\\": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "dan entous",
+                    "email": "dan.entous@pennlinepublishing.com"
+                }
+            ],
+            "description": "php classes that implement europeana’s api v2",
+            "support": {
+                "source": "https://github.com/dan-nl/europeana-api/tree/master",
+                "issues": "https://github.com/dan-nl/europeana-api/issues"
+            },
+            "time": "2015-03-22 11:13:39"
+        },
+        {
+            "name": "pennline/config",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pennline/config.git",
+                "reference": "0e9ef066659400a1906920528b79c4ea7df27798"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pennline/config/zipball/0e9ef066659400a1906920528b79c4ea7df27798",
+                "reference": "0e9ef066659400a1906920528b79c4ea7df27798",
+                "shasum": ""
+            },
+            "require": {
+                "php": "5.3.28"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pennline\\Config\\": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "dan entous",
+                    "email": "dan.entous@pennlinepublishing.com"
+                }
+            ],
+            "description": "the config package for the pennline framework",
+            "support": {
+                "source": "https://github.com/pennline/config/tree/master",
+                "issues": "https://github.com/pennline/config/issues"
+            },
+            "time": "2015-03-22 01:51:45"
+        },
+        {
+            "name": "pennline/html",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pennline/html.git",
+                "reference": "25d4f5e3cc49fabb14c287e5d73776af1c7ce702"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pennline/html/zipball/25d4f5e3cc49fabb14c287e5d73776af1c7ce702",
+                "reference": "25d4f5e3cc49fabb14c287e5d73776af1c7ce702",
+                "shasum": ""
+            },
+            "require": {
+                "php": "5.3.28"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pennline\\Html\\": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "dan entous",
+                    "email": "dan.entous@pennlinepublishing.com"
+                }
+            ],
+            "description": "the html package for the pennline framework",
+            "support": {
+                "source": "https://github.com/pennline/html/tree/master",
+                "issues": "https://github.com/pennline/html/issues"
+            },
+            "time": "2015-03-22 02:08:19"
+        },
+        {
+            "name": "pennline/http",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pennline/http.git",
+                "reference": "69925f816ddf3077fa7a7af42e900f6eacd30f40"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pennline/http/zipball/69925f816ddf3077fa7a7af42e900f6eacd30f40",
+                "reference": "69925f816ddf3077fa7a7af42e900f6eacd30f40",
+                "shasum": ""
+            },
+            "require": {
+                "php": "5.3.28"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pennline\\Http\\": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "dan entous",
+                    "email": "dan.entous@pennlinepublishing.com"
+                }
+            ],
+            "description": "the http package for the pennline framework",
+            "support": {
+                "source": "https://github.com/pennline/http/tree/master",
+                "issues": "https://github.com/pennline/http/issues"
+            },
+            "time": "2015-03-22 02:08:52"
+        },
+        {
+            "name": "pennline/owasp",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pennline/owasp.git",
+                "reference": "279b26e0f24a6207d6f5fd8bc824ec878d85d0a3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pennline/owasp/zipball/279b26e0f24a6207d6f5fd8bc824ec878d85d0a3",
+                "reference": "279b26e0f24a6207d6f5fd8bc824ec878d85d0a3",
+                "shasum": ""
+            },
+            "require": {
+                "php": "5.3.28"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pennline\\Owasp\\": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "dan entous",
+                    "email": "dan.entous@pennlinepublishing.com"
+                }
+            ],
+            "description": "the owasp package for the pennline framework",
+            "support": {
+                "source": "https://github.com/pennline/owasp/tree/master",
+                "issues": "https://github.com/pennline/owasp/issues"
+            },
+            "time": "2015-03-22 02:09:17"
+        },
+        {
+            "name": "pennline/php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pennline/php.git",
+                "reference": "6552b5b4a42d6b47eb41c5dfe484811af3a95804"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pennline/php/zipball/6552b5b4a42d6b47eb41c5dfe484811af3a95804",
+                "reference": "6552b5b4a42d6b47eb41c5dfe484811af3a95804",
+                "shasum": ""
+            },
+            "require": {
+                "php": "5.3.28"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pennline\\Php\\": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "dan entous",
+                    "email": "dan.entous@pennlinepublishing.com"
+                }
+            ],
+            "description": "the php package for the pennline framework",
+            "support": {
+                "source": "https://github.com/pennline/php/tree/master",
+                "issues": "https://github.com/pennline/php/issues"
+            },
+            "time": "2015-03-22 02:09:40"
+        },
+        {
+            "name": "zendframework/zend-crypt",
+            "version": "2.3.7",
+            "target-dir": "Zend/Crypt",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/Component_ZendCrypt.git",
+                "reference": "6e885dcc6177e266c19febe0b5e979b7a3e4e8b1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendCrypt/zipball/6e885dcc6177e266c19febe0b5e979b7a3e4e8b1",
+                "reference": "6e885dcc6177e266c19febe0b5e979b7a3e4e8b1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.23",
+                "zendframework/zend-math": "self.version",
+                "zendframework/zend-servicemanager": "self.version",
+                "zendframework/zend-stdlib": "self.version"
+            },
+            "suggest": {
+                "ext-mcrypt": "Required for most features of Zend\\Crypt"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev",
+                    "dev-develop": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Zend\\Crypt\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "homepage": "https://github.com/zendframework/zf2",
+            "keywords": [
+                "crypt",
+                "zf2"
+            ],
+            "time": "2015-03-12 16:55:53"
+        },
+        {
+            "name": "zendframework/zend-loader",
+            "version": "2.3.7",
+            "target-dir": "Zend/Loader",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/Component_ZendLoader.git",
+                "reference": "fcca80907c35f0827f992b7a58adbbff4baf728e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendLoader/zipball/fcca80907c35f0827f992b7a58adbbff4baf728e",
+                "reference": "fcca80907c35f0827f992b7a58adbbff4baf728e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.23"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev",
+                    "dev-develop": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Zend\\Loader\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "homepage": "https://github.com/zendframework/zf2",
+            "keywords": [
+                "loader",
+                "zf2"
+            ],
+            "time": "2015-03-12 16:55:53"
+        },
+        {
+            "name": "zendframework/zend-mail",
+            "version": "2.3.7",
+            "target-dir": "Zend/Mail",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/Component_ZendMail.git",
+                "reference": "c59df90b72db0d5c18fa2058b46f4d1b740b0e3c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendMail/zipball/c59df90b72db0d5c18fa2058b46f4d1b740b0e3c",
+                "reference": "c59df90b72db0d5c18fa2058b46f4d1b740b0e3c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.23",
+                "zendframework/zend-crypt": "self.version",
+                "zendframework/zend-loader": "self.version",
+                "zendframework/zend-mime": "self.version",
+                "zendframework/zend-stdlib": "self.version",
+                "zendframework/zend-validator": "self.version"
+            },
+            "require-dev": {
+                "zendframework/zend-servicemanager": "self.version"
+            },
+            "suggest": {
+                "zendframework/zend-servicemanager": "Zend\\ServiceManager component"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev",
+                    "dev-develop": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Zend\\Mail\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "provides generalized functionality to compose and send both text and MIME-compliant multipart e-mail messages",
+            "homepage": "https://github.com/zendframework/zf2",
+            "keywords": [
+                "mail",
+                "zf2"
+            ],
+            "time": "2015-03-12 16:55:53"
+        },
+        {
+            "name": "zendframework/zend-math",
+            "version": "2.3.7",
+            "target-dir": "Zend/Math",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/Component_ZendMath.git",
+                "reference": "b54a187942d331244aa5b69bd32afa21428f9785"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendMath/zipball/b54a187942d331244aa5b69bd32afa21428f9785",
+                "reference": "b54a187942d331244aa5b69bd32afa21428f9785",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.23"
+            },
+            "suggest": {
+                "ext-bcmath": "If using the bcmath functionality",
+                "ext-gmp": "If using the gmp functionality",
+                "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
+                "zendframework/zend-servicemanager": ">= current version, if using the BigInteger::factory functionality"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev",
+                    "dev-develop": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Zend\\Math\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "homepage": "https://github.com/zendframework/zf2",
+            "keywords": [
+                "math",
+                "zf2"
+            ],
+            "time": "2015-03-12 16:55:53"
+        },
+        {
+            "name": "zendframework/zend-mime",
+            "version": "2.3.7",
+            "target-dir": "Zend/Mime",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/Component_ZendMime.git",
+                "reference": "1c7429d9c721266d9b28eccf66c9e6ff405604a3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendMime/zipball/1c7429d9c721266d9b28eccf66c9e6ff405604a3",
+                "reference": "1c7429d9c721266d9b28eccf66c9e6ff405604a3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.23",
+                "zendframework/zend-stdlib": "self.version"
+            },
+            "require-dev": {
+                "zendframework/zend-mail": "self.version"
+            },
+            "suggest": {
+                "zendframework/zend-mail": "Zend\\Mail component"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev",
+                    "dev-develop": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Zend\\Mime\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "homepage": "https://github.com/zendframework/zf2",
+            "keywords": [
+                "mime",
+                "zf2"
+            ],
+            "time": "2015-03-12 16:55:53"
+        },
+        {
+            "name": "zendframework/zend-servicemanager",
+            "version": "2.3.7",
+            "target-dir": "Zend/ServiceManager",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/Component_ZendServiceManager.git",
+                "reference": "10c7dfcd3b0e5856a53663c0971159573ec37ffa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendServiceManager/zipball/10c7dfcd3b0e5856a53663c0971159573ec37ffa",
+                "reference": "10c7dfcd3b0e5856a53663c0971159573ec37ffa",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.23"
+            },
+            "require-dev": {
+                "zendframework/zend-di": "self.version"
+            },
+            "suggest": {
+                "ocramius/proxy-manager": "ProxyManager 0.5.* to handle lazy initialization of services",
+                "zendframework/zend-di": "Zend\\Di component"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev",
+                    "dev-develop": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Zend\\ServiceManager\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "homepage": "https://github.com/zendframework/zf2",
+            "keywords": [
+                "servicemanager",
+                "zf2"
+            ],
+            "time": "2015-03-12 16:55:53"
+        },
+        {
+            "name": "zendframework/zend-stdlib",
+            "version": "2.3.7",
+            "target-dir": "Zend/Stdlib",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/Component_ZendStdlib.git",
+                "reference": "3f6e2416183d4879a983680e1165f14164b262f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/3f6e2416183d4879a983680e1165f14164b262f4",
+                "reference": "3f6e2416183d4879a983680e1165f14164b262f4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.23"
+            },
+            "require-dev": {
+                "zendframework/zend-eventmanager": "self.version",
+                "zendframework/zend-filter": "self.version",
+                "zendframework/zend-serializer": "self.version",
+                "zendframework/zend-servicemanager": "self.version"
+            },
+            "suggest": {
+                "zendframework/zend-eventmanager": "To support aggregate hydrator usage",
+                "zendframework/zend-filter": "To support naming strategy hydrator usage",
+                "zendframework/zend-serializer": "Zend\\Serializer component",
+                "zendframework/zend-servicemanager": "To support hydrator plugin manager usage"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev",
+                    "dev-develop": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Zend\\Stdlib\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "homepage": "https://github.com/zendframework/zf2",
+            "keywords": [
+                "stdlib",
+                "zf2"
+            ],
+            "time": "2015-03-12 16:55:53"
+        },
+        {
+            "name": "zendframework/zend-validator",
+            "version": "2.3.7",
+            "target-dir": "Zend/Validator",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/Component_ZendValidator.git",
+                "reference": "53ceee562ce689a6a610c7bb0bc8157c7ec63a45"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/Component_ZendValidator/zipball/53ceee562ce689a6a610c7bb0bc8157c7ec63a45",
+                "reference": "53ceee562ce689a6a610c7bb0bc8157c7ec63a45",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.23",
+                "zendframework/zend-stdlib": "self.version"
+            },
+            "require-dev": {
+                "zendframework/zend-db": "self.version",
+                "zendframework/zend-filter": "self.version",
+                "zendframework/zend-i18n": "self.version",
+                "zendframework/zend-math": "self.version",
+                "zendframework/zend-servicemanager": "self.version",
+                "zendframework/zend-session": "self.version",
+                "zendframework/zend-uri": "self.version"
+            },
+            "suggest": {
+                "zendframework/zend-db": "Zend\\Db component",
+                "zendframework/zend-filter": "Zend\\Filter component, required by the Digits validator",
+                "zendframework/zend-i18n": "Zend\\I18n component to allow translation of validation error messages as well as to use the various Date validators",
+                "zendframework/zend-math": "Zend\\Math component",
+                "zendframework/zend-resources": "Translations of validator messages",
+                "zendframework/zend-servicemanager": "Zend\\ServiceManager component to allow using the ValidatorPluginManager and validator chains",
+                "zendframework/zend-session": "Zend\\Session component",
+                "zendframework/zend-uri": "Zend\\Uri component, required by the Uri and Sitemap\\Loc validators"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev",
+                    "dev-develop": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Zend\\Validator\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "provides a set of commonly needed validators",
+            "homepage": "https://github.com/zendframework/zf2",
+            "keywords": [
+                "validator",
+                "zf2"
+            ],
+            "time": "2015-03-12 16:55:53"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "pennline/config": 20,
+        "pennline/html": 20,
+        "pennline/http": 20,
+        "pennline/owasp": 20,
+        "pennline/php": 20,
+        "europeana/api": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=5.3.2"
+    },
+    "platform-dev": []
+}
