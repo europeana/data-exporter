@@ -1,3 +1,5 @@
+**This project is deprecated and not maintained anymore**
+
 # Europeana Data Exporter
 Export datasets into xml files that can be used by [GWToolset][1].
 
